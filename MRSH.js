@@ -33,6 +33,22 @@
 	start_xx_j();
     //↑百度网盘有效性判断
 
+    function TrueOrFalsOrNull(ele,str,info1,info2){
+        if(ele > 0){
+            str.html(function(i,origText){
+                return '✅' + origText;
+            });
+        }else if(ele < 0) {
+            str.html(function(i,origText){
+                return origText + '❌' + '<font color="red">' + info1 + '</font>';
+            });
+        }else {
+            str.html(function(i,origText){
+                return origText + '🔔' + '<font color="orange">' + info2 + '</font>';
+            });
+        };
+    }
+
     function TrueOrFalse(ele,str,info){
         if(ele){
             str.html(function(i,origText){
@@ -40,7 +56,7 @@
             });
         }else {
             str.html(function(i,origText){
-                return '❌' + info + origText;
+                return origText + '❌' + '<font color="red">' + info + '</font>';
             });
         };
     }
@@ -51,7 +67,7 @@
         if(!ele){
             flag_BodyTextSize = false;
             str.html(function(i,origText){
-                return '❌' + info + origText;
+                return '❌' + '<font color="red">' + info + '</font>' + origText;
             });
         }
     }
@@ -104,14 +120,33 @@
     function ServerIPAddress(str){
         var SvrIPAddress = trim(str);
         var ZZ3 = /((\w)+\.)+(\w)+(\:[0-9]+)?/;
+        //正则匹配带端口或不带端口的域名地址
         var ZZ2 = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/;
+        //正则匹配不带端口的IP地址
         var ZZ1 = /^([\u4e00-\u9fa5]|\w|\s|[\u0800-\u4e00])+$/
+        //正则匹配至少输入了点东西的
         if(ZZ3.test(SvrIPAddress)){
             return 3;
         }else if(ZZ2.test(SvrIPAddress)){
             return 2;
         }else if(ZZ1.test(SvrIPAddress)){
             return 1;
+        }else{
+            return 0;
+        }
+    }
+
+    function ServerClientDownload(str){
+        var SvrCD = trim(str);
+        var ZZ1 = /((\w)+\.)+(\w)+(\:[0-9]+)?/;
+        var ZZ_1 = /^http(s)?\:\/\/([\u4e00-\u9fa5]|\s|[\u0800-\u4e00])+.com$/;
+        var ZZ_2 = /jq\.qq\.com/;
+        if(ZZ1.test(SvrCD)){
+            return 1;
+        }else if(ZZ_1.test(SvrCD)){
+            return -1;
+        }else if(ZZ_2.test(SvrCD)){
+            return -2;
         }else{
             return 0;
         }
@@ -145,7 +180,7 @@
             //console.log(jq(".pil.cl dd").eq(5).text());
             //用于debug输出绿宝石↑
 
-            TrueOrFalse(ServerTitleName(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(0).text()) >= 1 ,jq(".cgtl.mbm tbody tr td").eq(0), '');
+            TrueOrFalse(ServerTitleName(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(0).text()) >= 1 ,jq(".cgtl.mbm tbody tr td").eq(0), '模板服务器名称与标题不符');
             //eq(0)为服务器名称
             //提取标题中的服务器名称后，和模板内服务器名称做对比
             //console.log(jq(".cgtl.mbm tbody tr td").eq(0).text());
@@ -187,9 +222,12 @@
 
             //console.log(jq(".cgtl.mbm tbody tr td").eq(14).text());
             //用于debug输出IP地址↑
-            TrueOrFalse(ServerIPAddress(jq(".cgtl.mbm tbody tr td").eq(14).text()) >= 1 , jq(".cgtl.mbm tbody tr td").eq(14), '<font color="red">未在模板标注有效的IP地址/获取方式</font>');
+            TrueOrFalse(ServerIPAddress(jq(".cgtl.mbm tbody tr td").eq(14).text()) >= 1 , jq(".cgtl.mbm tbody tr td").eq(14), '未在模板标注有效的IP地址/获取方式');
             //eq(14)为IP地址
             //使用正则来匹配IP地址
+
+            TrueOrFalsOrNull(ServerClientDownload(jq(".cgtl.mbm tbody tr td").eq(11).text()), jq(".cgtl.mbm tbody tr td").eq(11), '未标注有效的客户端下载地址', '空');
+            
         })
     });
 })();
