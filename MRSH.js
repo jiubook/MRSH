@@ -33,6 +33,17 @@
 	start_xx_j();
     //↑百度网盘有效性判断
 
+    function TrueOrFalse(ele,str){
+        if(ele){
+            str.html(function(i,origText){
+                return '✅' + origText;
+            })
+        }else {
+            str.html(function(i,origText){
+                return '❌' + origText;
+            })
+        }
+    }
     function ReviewTitleZZ(str){
         //正则判断标题
         var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([\u4e00-\u9fa5]|\w|\s|[\u0800-\u4e00])*(\s|)——(\s|).[^\[]*\[(\d|\.|X|x|\-)+]$/;
@@ -80,61 +91,26 @@
 
     jq(document).ready(function(){
         jq(function () {
-            if(ReviewTitleZZ(jq('#thread_subject').text())){
+            TrueOrFalse(ReviewTitleZZ(jq('#thread_subject').text()),jq('#thread_subject'));
             //通过正则表达式判断标题是否正确
-                jq('#thread_subject').html(function(i,origText){
-		            return '✅' + origText;
-                })
-            }else{
-                jq('#thread_subject').html(function(i,origText){
-		            return '❌' + origText;
-                })
-            }
             //console.log(jq('#thread_subject').text());
             //用于debug输出标题内容↑
 
-            if(UserPointZZ(jq(".pil.cl dd").eq(2).text())){
+            TrueOrFalse(UserPointZZ(jq(".pil.cl dd").eq(2).text()),jq(".pil.cl dd").eq(2));
             //eq(2)为贡献
-                jq(".pil.cl dd").eq(2).html(function(i,origText){
-		            return '✅' + origText;
-                })
-            }else{
-                jq(".pil.cl dd").eq(2).html(function(i,origText){
-		            return '❌' + origText;
-                })
-            }
             //console.log(jq(".pil.cl dd").eq(2).text());
             //用于debug输出贡献点↑
 
-            if(UserPointZZ(jq(".pil.cl dd").eq(5).text())){
+            TrueOrFalse(UserPointZZ(jq(".pil.cl dd").eq(5).text()),jq(".pil.cl dd").eq(5))
             //eq(5)为绿宝石
-                jq(".pil.cl dd").eq(5).html(function(i,origText){
-		            return '✅' + origText;
-                })
-            }else{
-                jq(".pil.cl dd").eq(5).html(function(i,origText){
-		            return '❌' + origText;
-                })
-            }
             //console.log(jq(".pil.cl dd").eq(5).text());
             //用于debug输出绿宝石↑
 
-            if(ServerTitleName(jq('#thread_subject').text(),jq(".cgtl.mbm tbody tr td").eq(0).text()) >= 1 ){
+            TrueOrFalse(ServerTitleName(jq('#thread_subject').text(),jq(".cgtl.mbm tbody tr td").eq(0).text()) >= 1 ,jq(".cgtl.mbm tbody tr td").eq(0))
             //eq(0)为服务器名称
             //提取标题中的服务器名称后，和模板内服务器名称做对比
-                jq(".cgtl.mbm tbody tr td").eq(0).html(function(i,origText){
-		            return '✅' + origText;
-                })
-            }else{
-                jq(".cgtl.mbm tbody tr td").eq(0).html(function(i,origText){
-                    return '❌' + origText;
-                })
-            }
-
-            //jq(".cgtl.mbm tbody tr td").eq(0).text();
             //console.log(jq(".cgtl.mbm tbody tr td").eq(0).text());
-            //eq(0)为服务器名称
+            //用于debug输出服务器名称↑
         })
     });
-    // Your code here...
 })();
