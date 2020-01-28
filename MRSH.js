@@ -33,26 +33,26 @@
 	start_xx_j();
     //↑百度网盘有效性判断
 
-    function TrueOrFalse(ele,str){
+    function TrueOrFalse(ele,str,info){
         if(ele){
             str.html(function(i,origText){
                 return '✅' + origText;
-            })
+            });
         }else {
             str.html(function(i,origText){
-                return '❌' + origText;
-            })
-        }
+                return '❌' + info + origText;
+            });
+        };
     }
 
     var flag_BodyTextSize = true;
     //设置全局变量 BodyTextSize
-    function OnlyFalse(ele,str){
+    function OnlyFalse(ele,str,info){
         if(!ele){
             flag_BodyTextSize = false;
             str.html(function(i,origText){
-                return '❌' + origText;
-            })
+                return '❌' + info + origText;
+            });
         }
     }
 
@@ -64,7 +64,7 @@
     
     function UserPointZZ(ele){
         //正则判断数值是否为正
-        var ZZ = /^[0-9]*\s/
+        var ZZ = /^[0-9]*\s/;
         return ZZ.test(ele);
     }
 
@@ -80,8 +80,8 @@
         //从左寻找 “]” 的位置
         var subStr = String(str.substring(YouKuoHao + 1,PoZheHao));
         //通过 “]” 和 “—” 定位服务器名称
-        subStr = trim(subStr)
-        SvrName = trim(SvrName)
+        subStr = trim(subStr);
+        SvrName = trim(SvrName);
         //使用trim函数，清空字符串左右的空白
 
         //console.log("sbS:" + subStr);
@@ -97,6 +97,22 @@
             return 1;
         }
         else{
+            return 0;
+        };
+    }
+
+    function ServerIPAddress(str){
+        var SvrIPAddress = trim(str);
+        var ZZ3 = /((\w)+\.)+(\w)+(\:[0-9]+)?/;
+        var ZZ2 = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/;
+        var ZZ1 = /^([\u4e00-\u9fa5]|\w|\s|[\u0800-\u4e00])+$/
+        if(ZZ3.test(SvrIPAddress)){
+            return 3;
+        }else if(ZZ2.test(SvrIPAddress)){
+            return 2;
+        }else if(ZZ1.test(SvrIPAddress)){
+            return 1;
+        }else{
             return 0;
         }
     }
@@ -114,49 +130,50 @@
 
     jq(document).ready(function(){
         jq(function () {
-            TrueOrFalse(ReviewTitleZZ(jq('#thread_subject').text()), jq('#thread_subject'));
+            TrueOrFalse(ReviewTitleZZ(jq('#thread_subject').text()), jq('#thread_subject'), '');
             //通过正则表达式判断标题是否正确
             //console.log(jq('#thread_subject').text());
             //用于debug输出标题内容↑
 
-            TrueOrFalse(UserPointZZ(jq(".pil.cl dd").eq(2).text()), jq(".pil.cl dd").eq(2));
+            TrueOrFalse(UserPointZZ(jq(".pil.cl dd").eq(2).text()), jq(".pil.cl dd").eq(2), '');
             //eq(2)为贡献
             //console.log(jq(".pil.cl dd").eq(2).text());
             //用于debug输出贡献点↑
 
-            TrueOrFalse(UserPointZZ(jq(".pil.cl dd").eq(5).text()), jq(".pil.cl dd").eq(5))
+            TrueOrFalse(UserPointZZ(jq(".pil.cl dd").eq(5).text()), jq(".pil.cl dd").eq(5), '');
             //eq(5)为绿宝石
             //console.log(jq(".pil.cl dd").eq(5).text());
             //用于debug输出绿宝石↑
 
-            TrueOrFalse(ServerTitleName(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(0).text()) >= 1 ,jq(".cgtl.mbm tbody tr td").eq(0))
+            TrueOrFalse(ServerTitleName(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(0).text()) >= 1 ,jq(".cgtl.mbm tbody tr td").eq(0), '');
             //eq(0)为服务器名称
             //提取标题中的服务器名称后，和模板内服务器名称做对比
             //console.log(jq(".cgtl.mbm tbody tr td").eq(0).text());
             //用于debug输出服务器名称↑
 
             jq('.t_f font font').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this));
-            })
+                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
+            });
             jq('.t_f font').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this));
-            })
+                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
+            });
             jq('.t_f div div div div').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this));
-            })
+                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
+            });
             jq('.t_f div div div').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this));
-            })
+                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
+            });
             jq('.t_f div div').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this));
-            })
+                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
+            });
             jq('.t_f div').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this));
-            })
+                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
+            });
             jq('.t_f a').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this));
-            })
-            console.log(flag_BodyTextSize);
+                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
+            });
+            //console.log(flag_BodyTextSize);
+            //用于debug输出是否有大于5号的字↑
             if(flag_BodyTextSize == false){
                 jq('.t_f').html(function(i,origText){
                     return '<div align="center"><font color="red" size="4">❌当前页面中含有字符大小超过5的文字</font></div>' + origText;
@@ -165,10 +182,14 @@
                 jq('.t_f').html(function(i,origText){
                     return '<div align="center"><font color="green" size="4">✅当前页面字符大小合规</font></div>' + origText;
                 });
-            }
+            };
             //用于判断字符是否超过5号（24px）
 
-
+            //console.log(jq(".cgtl.mbm tbody tr td").eq(14).text());
+            //用于debug输出IP地址↑
+            TrueOrFalse(ServerIPAddress(jq(".cgtl.mbm tbody tr td").eq(14).text()) >= 1 , jq(".cgtl.mbm tbody tr td").eq(14), '<font color="red">未在模板标注有效的IP地址/获取方式</font>');
+            //eq(14)为IP地址
+            //使用正则来匹配IP地址
         })
     });
 })();
