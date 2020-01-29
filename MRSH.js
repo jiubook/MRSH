@@ -30,9 +30,6 @@
     //}
     //另一种加载jQuery脚本的方法
 	
-	start_xx_j();
-    //↑百度网盘有效性判断
-
     function TrueOrFalsOrNull(ele,str,info1,info2){
         if(ele > 0){
             str.html(function(i,origText){
@@ -69,7 +66,7 @@
             str.html(function(i,origText){
                 return '❌' + '<font color="red">' + info + '</font>' + origText;
             });
-        }
+        };
     }
 
     function ReviewTitleZZ(str){
@@ -185,7 +182,9 @@
             //提取标题中的服务器名称后，和模板内服务器名称做对比
             //console.log(jq(".cgtl.mbm tbody tr td").eq(0).text());
             //用于debug输出服务器名称↑
-
+            jq('.t_f font font font').each(function(){
+                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
+            });
             jq('.t_f font font').each(function(){
                 OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
             });
@@ -228,6 +227,14 @@
 
             TrueOrFalsOrNull(ServerClientDownload(jq(".cgtl.mbm tbody tr td").eq(11).text()), jq(".cgtl.mbm tbody tr td").eq(11), '未标注有效的客户端下载地址', '空');
             
+
+            /**
+             * ↓↓最后执行↓↓
+             */
+            start_xx_j();
+            //↑百度网盘有效性判断
+        
         })
     });
+
 })();
