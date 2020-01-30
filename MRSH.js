@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.2
+// @version      0.0.3
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -37,11 +37,11 @@
             });
         }else if(ele < 0) {
             str.html(function(i,origText){
-                return origText + '❌' + '<font color="red">' + info1 + '</font>';
+                return '❌' + origText + '❌' + '<font color="red">' + info1 + '</font>';
             });
         }else {
             str.html(function(i,origText){
-                return origText + '🔔' + '<font color="orange">' + info2 + '</font>';
+                return '🔔' + origText + '🔔' + '<font color="orange"><strong>' + info2 + '</strong></font>';
             });
         };
     }
@@ -53,7 +53,7 @@
             });
         }else {
             str.html(function(i,origText){
-                return origText + '❌' + '<font color="red">' + info + '</font>';
+                return '❌' + origText + '❌' + '<font color="red">' + info + '</font>';
             });
         };
     }
@@ -120,7 +120,7 @@
         //正则匹配带端口或不带端口的域名地址
         var ZZ2 = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/;
         //正则匹配不带端口的IP地址
-        var ZZ1 = /^([\u4e00-\u9fa5]|\w|\s|[\u0800-\u4e00])+$/
+        var ZZ1 = /([\u4e00-\u9fa5]|\w|\s|[\u0800-\u4e00])+/;
         //正则匹配至少输入了点东西的
         if(ZZ3.test(SvrIPAddress)){
             return 3;
@@ -130,23 +130,63 @@
             return 1;
         }else{
             return 0;
-        }
+        };
+    }
+
+    function ServerClientDownloadSet(str){
+        var strL = str.indexOf("»");
+        //从左寻找 “»” 的位置
+        var strR = str.indexOf("下");
+        //从左寻找 “下” 的位置
+        var subStr = String(str.substring(strL + 1,strR));
+        //通过 “»” 和 “下” 定位服务器是否需要下载专用客户端
+        subStr = trim(subStr);
+        if(subStr == "不需要"){
+            return 0;
+        } else if(subStr == "需要"){
+            return -1;
+        };
     }
 
     function ServerClientDownload(str){
         var SvrCD = trim(str);
         var ZZ1 = /((\w)+\.)+(\w)+(\:[0-9]+)?/;
-        var ZZ_1 = /^http(s)?\:\/\/([\u4e00-\u9fa5]|\s|[\u0800-\u4e00])+.com$/;
+        var ZZ_1 = /^http(s)?\:\/\/(www.)?([\u4e00-\u9fa5]|\s|[\u0800-\u4e00]|)+(\w)*([0-9]+)*.com$/;
         var ZZ_2 = /jq\.qq\.com/;
-        if(ZZ1.test(SvrCD)){
-            return 1;
+        if(ZZ_2.test(SvrCD)){
+            return -2;
         }else if(ZZ_1.test(SvrCD)){
             return -1;
-        }else if(ZZ_2.test(SvrCD)){
-            return -2;
-        }else{
+        }else if(ZZ1.test(SvrCD)){
+            //忽视内容，返回99
+            return 99;
+        }else {
             return 0;
-        }
+        };
+    }
+
+    function SeverBusinessConditions(str){
+        var strR = str.indexOf("服");
+        //从左寻找 “服” 的位置
+        var subStr = String(str.substring(0,strR));
+        //从头开始，通过 “服” 定位服务器是否公益
+        if(subStr == "公益"){
+            return 0;
+        } else if (subStr == "商业"){
+            //忽视内容，返回99
+            return 99;
+        } else{
+            return -1;
+        };
+    }
+
+    function isSeverCommonwealSlogansTrue(str){
+        var ZZ1 = /本服是公益服并且愿意承担虚假宣传的一切后果/;
+        if(ZZ1.test(str)){
+            return 0;
+        } else {
+            return -1;
+        };
     }
 
     function BodyFontSize(str){
@@ -160,7 +200,18 @@
         //将string转换为int型，并返回
     }
 
+    function isNowInServerForum(str){
+        var ZZ1 = /服务器/;
+        if(ZZ1.test(str)){
+            return true;
+        } else {
+            return false;
+        };
+    }
+
     jq(document).ready(function(){
+        if (isNowInServerForum(jq(".z").text())) {
+        //用于判定是否在服务器版，不在的话就不工作
         jq(function () {
             TrueOrFalse(ReviewTitleZZ(jq('#thread_subject').text()), jq('#thread_subject'), '');
             //通过正则表达式判断标题是否正确
@@ -225,9 +276,13 @@
             //eq(14)为IP地址
             //使用正则来匹配IP地址
 
-            TrueOrFalsOrNull(ServerClientDownload(jq(".cgtl.mbm tbody tr td").eq(11).text()), jq(".cgtl.mbm tbody tr td").eq(11), '未标注有效的客户端下载地址', '空');
-            
+            TrueOrFalsOrNull(ServerClientDownload(jq(".cgtl.mbm tbody tr td").eq(11).text()) + ServerClientDownloadSet(jq(".cgtl.mbm tbody tr td").eq(9).text()), jq(".cgtl.mbm tbody tr td").eq(11), '未标注有效的客户端下载地址', '该服为纯净服，此项选填');
+            //eq(9)为服务器类型，eq(11)为客户端下载地址
 
+            TrueOrFalsOrNull(SeverBusinessConditions(jq(".cgtl.mbm tbody tr td").eq(3).text()) + isSeverCommonwealSlogansTrue(jq('.t_f').text()), jq(".cgtl.mbm tbody tr td").eq(3), "公益服标语不合格", "需要注意其公益服标语");
+            //eq(3)为服务器营利模式
+            
+            
             /**
              * ↓↓最后执行↓↓
              */
@@ -235,6 +290,7 @@
             //↑百度网盘有效性判断
         
         })
+        };
     });
 
 })();
