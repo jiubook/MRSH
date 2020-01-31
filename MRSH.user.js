@@ -14,6 +14,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @downloadURL  https://github.com/jiubook/mcbbsReviewServer/raw/master/MRSH.user.js
+// @license      GNU General Public License v3.0
 // @require      https://cdn.staticfile.org/jquery/1.12.4/jquery.min.js
 // @require 	 https://greasyfork.org/scripts/376401-findandreplacedomtext/code/findAndReplaceDOMText.js?version=660038
 // @require      https://greasyfork.org/scripts/376402-ddxuf/code/ddxuf.js?version=661422
