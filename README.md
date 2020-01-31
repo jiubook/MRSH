@@ -1,2 +1,2 @@
-# mcbbsReviewServerHelper
- MRSH - 你的服务器审核版好助手
+# MRSH
+ MRSH - 一个审核助手
