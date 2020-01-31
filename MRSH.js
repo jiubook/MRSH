@@ -1,11 +1,13 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.3
+// @version      0.0.4
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
 // @match        *://www.mcbbs.net/forum.php?mod=viewthread*
+// @match        *://www.mcbbs.net/forum-serverpending*
+// @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=296*
 // @create       2020-01-28
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
@@ -202,7 +204,8 @@
 
     function isNowInServerForum(str){
         var ZZ1 = /服务器/;
-        if(ZZ1.test(str)){
+        var ZZ2 = /多人联机/
+        if(ZZ1.test(str) && ZZ2.test(str)){
             return true;
         } else {
             return false;
@@ -213,6 +216,10 @@
         if (isNowInServerForum(jq(".z").text())) {
         //用于判定是否在服务器版，不在的话就不工作
         jq(function () {
+            jq('.s.xst').each(function(){
+                TrueOrFalse(ReviewTitleZZ(jq(this).text()), jq(this), '');
+            });
+
             TrueOrFalse(ReviewTitleZZ(jq('#thread_subject').text()), jq('#thread_subject'), '');
             //通过正则表达式判断标题是否正确
             //console.log(jq('#thread_subject').text());
@@ -261,11 +268,11 @@
             //用于debug输出是否有大于5号的字↑
             if(flag_BodyTextSize == false){
                 jq('.t_f').html(function(i,origText){
-                    return '<div align="center"><font color="red" size="4">❌当前页面中含有字符大小超过5的文字</font></div>' + origText;
+                    return '<div align="center" class="FontSizeTips"><font color="red" size="4">❌当前页面中含有字符大小超过5的文字</font></div>' + origText;
                 });
             }else{
                 jq('.t_f').html(function(i,origText){
-                    return '<div align="center"><font color="green" size="4">✅当前页面字符大小合规</font></div>' + origText;
+                    return '<div align="center" class="FontSizeTips"><font color="green" size="4">✅当前页面字符大小合规</font></div>' + origText;
                 });
             };
             //用于判断字符是否超过5号（24px）
@@ -276,7 +283,7 @@
             //eq(14)为IP地址
             //使用正则来匹配IP地址
 
-            TrueOrFalsOrNull(ServerClientDownload(jq(".cgtl.mbm tbody tr td").eq(11).text()) + ServerClientDownloadSet(jq(".cgtl.mbm tbody tr td").eq(9).text()), jq(".cgtl.mbm tbody tr td").eq(11), '未标注有效的客户端下载地址', '该服为纯净服，此项选填');
+            TrueOrFalsOrNull(ServerClientDownload(jq(".cgtl.mbm tbody tr td").eq(11).text()) + ServerClientDownloadSet(jq(".cgtl.mbm tbody tr td").eq(9).text()), jq(".cgtl.mbm tbody tr td").eq(11), '未在模板标注有效的客户端下载地址', '该服为纯净服，此项选填');
             //eq(9)为服务器类型，eq(11)为客户端下载地址
 
             TrueOrFalsOrNull(SeverBusinessConditions(jq(".cgtl.mbm tbody tr td").eq(3).text()) + isSeverCommonwealSlogansTrue(jq('.t_f').text()), jq(".cgtl.mbm tbody tr td").eq(3), "公益服标语不合格", "需要注意其公益服标语");
