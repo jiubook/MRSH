@@ -1,13 +1,17 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.4
+// @version      0.0.5
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
 // @match        *://www.mcbbs.net/forum.php?mod=viewthread*
 // @match        *://www.mcbbs.net/forum-serverpending*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=296*
+// @match        *://www.mcbbs.net/forum-server*
+// @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=179*
+// @match        *://www.mcbbs.net/forum-362*
+// @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
@@ -75,7 +79,8 @@
 
     function ReviewTitleZZ(str){
         //正则判断标题
-        var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([\u4e00-\u9fa5]|\w|\s|[\u0800-\u4e00])*(\s|)——(\s|).[^\[]*\[(\d|\.|X|x|\-)+]$/;
+        //var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([\u4e00-\u9fa5]|\w|\s|[\u0800-\u4e00])*(\s|)——(\s|).[^\[]*\[(\d|\.|X|x|\-)+]$/;
+        var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([0-9a-zA-Z\u2160-\u217f\u3040-\u30ff\u31f0-\u31ff\u4e00-\u9fa5]|\s)+——([^\u2014\[\]]|\s)+\[(\-?1\.\d{1,2}(\.(\d{1,2}|X|x))?){1,2}\]$/;
         return ZZ.test(str);
     }
     
