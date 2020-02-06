@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.6
+// @version      0.0.7
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -13,6 +13,8 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
+// @lastmodified 2020-02-06
+// @note         1.0.0 版本以前不会去支持一键审核，还需人工查看。
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
 // @grant        GM_getValue
@@ -111,14 +113,20 @@
             return '';
         }
     }
-    
+
+    var flag_ReviewTitleZZ = true;
     function ReviewTitleZZ(str){
         //正则判断标题
         //var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([\u4e00-\u9fa5]|\w|\s|[\u0800-\u4e00])*(\s|)——(\s|).[^\[]*\[(\d|\.|X|x|\-)+]$/;
         var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([0-9a-zA-Z\u2160-\u217f\u3040-\u30ff\u31f0-\u31ff\u4e00-\u9fa5]|\s)+——([^\u2014]|\s)+\[(\-?1\.\d{1,2}(\.(\d{1,2}|X|x))?){1,2}\]$/;
-        return ZZ.test(str);
+        if (ZZ.test(str)){
+            return true;
+        }else{
+            flag_ReviewTitleZZ = false;
+            return false;
+        }
     }
-    
+
     function UserPointZZ(ele){
         //正则判断数值是否为正
         var ZZ = /^[0-9]*\s/;
@@ -154,6 +162,185 @@
         }
         else{
             return 0;
+        };
+    }
+    function ServerVersionXS(str){
+        var VersionList = ['1.15.2', '1.15.1', '1.15',
+                           '1.14.4', '1.14',
+                           '1.13.2', '1.13.1', '1.13',
+                           '1.12.2', '1.12.1', '1.12',
+                           '1.11.2', '1.11',
+                           '1.10.X',
+                           '1.9.4', '1.9',
+                           '1.8.X',
+                           '1.7.10', '1.7.2',
+                           '1.6.4'];
+        var VersionList_X = ['1.15.X', '1.14.X', '1.13.X', '1.12.X', '1.11.X', '1.10.X', '1.9.X', '1.8.X', '1.7.X', '1.6.X'];
+        var VersionList_x = ['1.15.x', '1.14.x', '1.13.x', '1.12.x', '1.11.x', '1.10.x', '1.9.x', '1.8.x', '1.7.x', '1.6.x'];
+        for(var i = 0; i < VersionList_X.length; i++){
+            if((str == VersionList_X[i])||(str == VersionList_x[i])){
+                break;
+            };
+        };
+        switch(i){
+            case 0:
+                return VersionList[VersionList.length - 20];
+            case 1:
+                return VersionList[VersionList.length - 17];
+            case 2:
+                return VersionList[VersionList.length - 15];
+            case 3:
+                return VersionList[VersionList.length - 12];
+            case 4:
+                return VersionList[VersionList.length - 9];
+            case 5:
+                return VersionList[VersionList.length - 7];
+            case 6:
+                return VersionList[VersionList.length - 6];
+            case 7:
+                return VersionList[VersionList.length - 4];
+            case 8:
+                return VersionList[VersionList.length - 3];
+            case 9:
+                return VersionList[VersionList.length - 1];
+            default:
+                return str;
+        };
+    }
+    function ServerVersionXE(str){
+        var VersionList = ['1.15.2', '1.15.1', '1.15',
+                           '1.14.4', '1.14',
+                           '1.13.2', '1.13.1', '1.13',
+                           '1.12.2', '1.12.1', '1.12',
+                           '1.11.2', '1.11',
+                           '1.10.X',
+                           '1.9.4', '1.9',
+                           '1.8.X',
+                           '1.7.10', '1.7.2',
+                           '1.6.4'];
+        var VersionList_X = ['1.15.X', '1.14.X', '1.13.X', '1.12.X', '1.11.X', '1.10.X', '1.9.X', '1.8.X', '1.7.X', '1.6.X'];
+        var VersionList_x = ['1.15.x', '1.14.x', '1.13.x', '1.12.x', '1.11.x', '1.10.x', '1.9.x', '1.8.x', '1.7.x', '1.6.x'];
+        for(var i = 0; i < VersionList_X.length; i++){
+            if((str == VersionList_X[i])||(str == VersionList_x[i])){
+                break;
+            };
+        };
+        switch(i){
+            case 0:
+                return VersionList[VersionList.length - 18];
+            case 1:
+                return VersionList[VersionList.length - 16];
+            case 2:
+                return VersionList[VersionList.length - 13];
+            case 3:
+                return VersionList[VersionList.length - 10];
+            case 4:
+                return VersionList[VersionList.length - 8];
+            case 5:
+                return VersionList[VersionList.length - 7];
+            case 6:
+                return VersionList[VersionList.length - 5];
+            case 7:
+                return VersionList[VersionList.length - 4];
+            case 8:
+                return VersionList[VersionList.length - 2];
+            case 9:
+                return VersionList[VersionList.length - 1];
+            default:
+                return str;
+        };
+    }
+    function getServerVersion(str1, str2){
+        var strL = str1.lastIndexOf("[");
+        var strR = str1.lastIndexOf("]");
+        var subStr = String(str1.substring(strL + 1,strR));
+        subStr = trim(subStr);
+        var ServerVersion = trim(str2)
+        ServerVersion = ServerVersion.split(/\s+/);
+        var VersionList = ['1.15.2', '1.15.1', '1.15',
+                           '1.14.4', '1.14',
+                           '1.13.2', '1.13.1', '1.13',
+                           '1.12.2', '1.12.1', '1.12',
+                           '1.11.2', '1.11',
+                           '1.10.X',
+                           '1.9.4', '1.9',
+                           '1.8.X',
+                           '1.7.10', '1.7.2',
+                           '1.6.4']//共20个 .length输出20
+        var ZZ4 = /^\d{2}w\d{2}[a-z]$/;
+        //20w05a
+        var ZZ3 = /^1\.\d{1,2}(\.(\d{1,2}|X|x))?\-1\.\d{1,2}(\.(\d{1,2}|X|x))?$/;
+        //1.7.2-1.12.2
+        var ZZ2 = /^1\.\d{1,2}(\.\d{1,2})?$/;
+        //1.7.10
+        var ZZ1 = /^1\.\d{1,2}\.(X|x)$/;
+        //1.7.x
+    /*
+        console.log("sbS:" + subStr);
+        console.log("SvS:" + ServerVersion[0] + "; SvE:" + ServerVersion[ServerVersion.length - 1]);
+        console.log("SvL:" + ServerVersion.length);
+        console.log("VlS:" + VersionList[0] + "; VlE:" + VersionList[VersionList.length - 1]);
+        console.log("VlL:" + VersionList.length);
+        ↑调试用
+    */
+        if(ZZ4.test(subStr) && ServerVersion[ServerVersion.length - 1] == '其它版本'){
+        //其他版本的情况
+            return 4;
+        }else if(ZZ3.test(subStr)){
+        //多版本的情况
+            var TitleVersion3 = subStr.split('-');
+            trim(TitleVersion3[0]);
+            trim(TitleVersion3[1]);
+            //避免有人在-的左右加空格
+            if(ServerVersionXS(TitleVersion3[1]) == ServerVersion[0] && ServerVersionXE(TitleVersion3[0]) == ServerVersion[ServerVersion.length - 1]){
+            //先判定标题中的版本号是否和模板相符合
+                for(var i_3 = 0; i_3 < VersionList.length; i_3++){
+                //遍历VersionList，直到找到ServerVersion
+                    if(ServerVersion[0] == VersionList[i_3]){
+                        break;
+                    };
+                };
+                if(ServerVersion[ServerVersion.length - 1] == VersionList[i_3 + ServerVersion.length - 1]){
+                    return 3;
+                }else{
+                //缺项漏项 return -2
+                    return -2;
+                };
+            }else{
+            //标题中的版本号和模板不符 就直接return -3
+                return -3;
+            };
+        }else if(ZZ2.test(subStr)){
+        //单版本的情况
+            var TitleVersion2 = subStr;
+            if (TitleVersion2 == ServerVersion[0]){
+            //判定标题中的版本号是否和模板相符合
+                return 2;
+            }else{
+            //标题中的版本号和模板不符 就直接return -3
+                return -3;
+            };
+        }else if(ZZ1.test(subStr)){
+        //单版本、复合版本的情况
+            var TitleVersion1 = subStr;
+            if(ServerVersionXS(TitleVersion1[0]) == ServerVersion[0] && ServerVersionXE(TitleVersion1[0]) == ServerVersion[ServerVersion.length - 1]){
+            //先判定标题中的版本号是否和模板相符合
+                for(var i_1 = 0; i_1 < VersionList.length; i_1++){
+                //遍历VersionList，直到找到ServerVersion
+                    if(ServerVersion[0] == VersionList[i_1]){
+                        break;
+                    };
+                };
+                if(ServerVersion[ServerVersion.length - 1] == VersionList[i_1 + ServerVersion.length - 1]){
+                    return 1;
+                }else{
+                //缺项漏项 return -2
+                    return -2;
+                };
+            }else{
+            //标题中的版本号和模板不符 就直接return -3
+                return -3;
+            };
         };
     }
 
@@ -346,7 +533,8 @@
 
     function isNowInServerForum(str){
         var ZZ1 = /服务器/;
-        var ZZ2 = /多人联机/
+        var ZZ2 = /gid=167/;
+        //多人联机大区分区的固定URL
         if(ZZ1.test(str) && ZZ2.test(str)){
             return true;
         } else {
@@ -363,7 +551,7 @@
         }
     }
     jq(document).ready(function(){
-        if (isNowInServerForum(jq(".z").text())) {
+        if (isNowInServerForum(jq(".bm.cl").html())) {
         //用于判定是否在服务器版，不在的话就不工作
         jq(function () {
             jq('.s.xst').each(function(){
@@ -386,11 +574,15 @@
             //console.log(jq(".pil.cl dd").eq(5).text());
             //用于debug输出绿宝石↑
 
-            TrueOrFalse(ServerTitleName(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(0).text()) >= 1 ,jq(".cgtl.mbm tbody tr td").eq(0), '模板服务器名称与标题不符');
+            TrueOrFalse(ServerTitleName(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(0).text()) > 0 , jq(".cgtl.mbm tbody tr td").eq(0), '模板服务器名称与标题不符');
             //eq(0)为服务器名称
             //提取标题中的服务器名称后，和模板内服务器名称做对比
             //console.log(jq(".cgtl.mbm tbody tr td").eq(0).text());
             //用于debug输出服务器名称↑
+
+            TrueOrFalse(getServerVersion(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(2).text()) > 0, jq(".cgtl.mbm tbody tr td").eq(2), '模板版本号与标题不符');
+            //eq2为版本号
+            //提取标题中的版本号后，和模板内版本号做对比
 
             jq('.t_f').find('font').each(function(){
                 OnlyFalse(BodyFont_Size_Color(jq(this)), jq(this), '');
@@ -399,7 +591,7 @@
             //用于debug输出是否有大于5号的字↑
 
             jq('.spoilerbody').each(function(){
-                jq(this).css('display','block'); 
+                jq(this).css('display','block');
             })
             //展开所有的折叠页
 
@@ -420,8 +612,7 @@
 
             TrueOrFalsOrNull(SeverBusinessConditions(jq(".cgtl.mbm tbody tr td").eq(3).text()) + isSeverCommonwealSlogansTrue(jq('.t_f').text()), jq(".cgtl.mbm tbody tr td").eq(3), "公益服标语不合格", "需要注意其公益服标语");
             //eq(3)为服务器营利模式
-            
-            
+
 
             /**
              * ↓↓最后执行↓↓
@@ -430,10 +621,10 @@
                 //用于判定模板是否有空
                     OnlyFalse(isNull(jq(this).text()), jq(this), '该项为空');
                 });
-            
+
             start_xx_j();
             //↑百度网盘有效性判断
-        
+
         })
         };
     });
