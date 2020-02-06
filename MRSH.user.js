@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.5
+// @version      0.0.6
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -17,7 +17,6 @@
 // @grant        GM_getResourceText
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @downloadURL  https://github.com/jiubook/mcbbsReviewServer/raw/master/MRSH.user.js
 // @license      GNU General Public License v3.0
 // @require      https://cdn.staticfile.org/jquery/1.12.4/jquery.min.js
 // @require 	 https://greasyfork.org/scripts/376401-findandreplacedomtext/code/findAndReplaceDOMText.js?version=660038
@@ -37,50 +36,86 @@
     //    document.documentElement.appendChild (s);
     //}
     //另一种加载jQuery脚本的方法
-	
-    function TrueOrFalsOrNull(ele,str,info1,info2){
+	function ThreeDifferentTips(ele,str,info1,info2,info3){
+        if(ele > 0){
+            str.html(function(i,origText){
+                return '🍃' + origText + '🍃' + Green(info1);
+            });
+        }else if(ele < 0) {
+            str.html(function(i,origText){
+                return '🍁' + origText + '🍁' + red(info2);
+            });
+        }else {
+            str.html(function(i,origText){
+                return '🍂' + origText + '🍂' + orange(info3);
+            });
+        };
+    }
+
+    function TrueOrFalsOrNull(ele,str,info2,info3){
         if(ele > 0){
             str.html(function(i,origText){
                 return '✅' + origText;
             });
         }else if(ele < 0) {
             str.html(function(i,origText){
-                return '❌' + origText + '❌' + '<font color="red">' + info1 + '</font>';
+                return '❌' + origText + '❌' + red(info2);
             });
         }else {
             str.html(function(i,origText){
-                return '🔔' + origText + '🔔' + '<font color="orange"><strong>' + info2 + '</strong></font>';
+                return '🔔' + origText + '🔔' + orange(info3);
             });
         };
     }
 
-    function TrueOrFalse(ele,str,info){
+    function TrueOrFalse(ele,str,info2){
         if(ele){
             str.html(function(i,origText){
                 return '✅' + origText;
             });
         }else {
             str.html(function(i,origText){
-                return '❌' + origText + '❌' + '<font color="red">' + info + '</font>';
+                return '❌' + origText + '❌' + red(info2);
             });
         };
     }
 
-    var flag_BodyTextSize = true;
-    //设置全局变量 BodyTextSize
-    function OnlyFalse(ele,str,info){
+    function OnlyFalse(ele,str,info2){
         if(!ele){
-            flag_BodyTextSize = false;
             str.html(function(i,origText){
-                return '❌' + '<font color="red">' + info + '</font>' + origText;
+                return '❌' + red(info2) + origText;
             });
         };
     }
 
+    function Green(str){
+        if(str != ''){
+            return '<font color="green">' + str + '</font>';
+        }else{
+            return '';
+        }
+    }
+
+    function red(str){
+        if(str != ''){
+            return '<font color="red">' + str + '</font>';
+        }else{
+            return '';
+        }
+    }
+
+    function orange(str){
+        if(str != ''){
+            return '<font color="#A63C00">' + str + '</font>';
+        }else{
+            return '';
+        }
+    }
+    
     function ReviewTitleZZ(str){
         //正则判断标题
         //var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([\u4e00-\u9fa5]|\w|\s|[\u0800-\u4e00])*(\s|)——(\s|).[^\[]*\[(\d|\.|X|x|\-)+]$/;
-        var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([0-9a-zA-Z\u2160-\u217f\u3040-\u30ff\u31f0-\u31ff\u4e00-\u9fa5]|\s)+——([^\u2014\[\]]|\s)+\[(\-?1\.\d{1,2}(\.(\d{1,2}|X|x))?){1,2}\]$/;
+        var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([0-9a-zA-Z\u2160-\u217f\u3040-\u30ff\u31f0-\u31ff\u4e00-\u9fa5]|\s)+——([^\u2014]|\s)+\[(\-?1\.\d{1,2}(\.(\d{1,2}|X|x))?){1,2}\]$/;
         return ZZ.test(str);
     }
     
@@ -105,7 +140,6 @@
         subStr = trim(subStr);
         SvrName = trim(SvrName);
         //使用trim函数，清空字符串左右的空白
-
         //console.log("sbS:" + subStr);
         //console.log("SN:" + SvrName);
         //用于debug输出↑
@@ -142,6 +176,22 @@
         };
     }
 
+    function ServerType(str){
+        var strR = str.indexOf("»");
+        //从左寻找 “»” 的位置
+        var subStr = String(str.substring(0,strR));
+        //从开头到 “»” 定位服务器类型
+        subStr = trim(subStr);
+        //console.log(subStr);
+        if(subStr == "纯净服务器"){
+            return 1;
+        } else if(subStr == "Mod服务器"){
+            return -1;
+        } else if(subStr == "其他（下面注明）"){
+            return 0;
+        };
+    }
+
     function ServerClientDownloadSet(str){
         var strL = str.indexOf("»");
         //从左寻找 “»” 的位置
@@ -151,9 +201,12 @@
         //通过 “»” 和 “下” 定位服务器是否需要下载专用客户端
         subStr = trim(subStr);
         if(subStr == "不需要"){
-            return 0;
+        //忽视内容，返回99
+            return 99;
         } else if(subStr == "需要"){
             return -1;
+        } else if(subStr == ""){
+            return 0;
         };
     }
 
@@ -162,7 +215,10 @@
         var ZZ1 = /((\w)+\.)+(\w)+(\:[0-9]+)?/;
         var ZZ_1 = /^http(s)?\:\/\/(www.)?([\u4e00-\u9fa5]|\s|[\u0800-\u4e00]|)+(\w)*([0-9]+)*.com$/;
         var ZZ_2 = /jq\.qq\.com/;
-        if(ZZ_2.test(SvrCD)){
+        var ZZ_3 = /(群|君羊|裙)+/;
+        if(ZZ_3.test(SvrCD)){
+            return -3;
+        }else if(ZZ_2.test(SvrCD)){
             return -2;
         }else if(ZZ_1.test(SvrCD)){
             return -1;
@@ -198,15 +254,94 @@
         };
     }
 
-    function BodyFontSize(str){
+    var flag_BodyTextSize = true;
+    var flag_BodyTextColor = true;
+    var flag_BodyTextBGColor = true;
+    var flag_BodyTextGGL = true;
+    //设置全局变量 字体大小, 字体颜色, 背景颜色, 刮刮乐
+    function BodyFont_Size_Color(str){
+        var color = ['rgb(0, 255, 255)','rgb(255, 255, 0)','rgb(0, 255, 0)','rgb(255, 0, 255)']
+        var color_RGBA = ['rgba(0, 255, 255, 0)','rgba(255, 255, 0, 0)','rgba(0, 255, 0, 0)','rgba(255, 0, 255, 0)']
+        //按顺序，分别为亮青色, 亮黄色, 亮绿色, 亮粉色
+        var flag_FontSize = true;
         var cssFontSize = str.css('font-size');
         //找到font-size的css，并提取
         var px = cssFontSize.indexOf('px');
         //找到px字符的位置
         var FontSize=cssFontSize.substring(0,px);
         //将px切割，保留数字字符
-        return parseInt(FontSize);
-        //将string转换为int型，并返回
+        if(parseInt(FontSize) > 24){
+        //将string转换为int型，并判断
+            flag_BodyTextSize = false;
+            flag_FontSize = false;
+        }
+        //console.log('text: ' + str.text());
+        //调试用↑
+        var flag_FontColor = true;
+        var cssFontColor = str.css('color');
+        //var cssFontColor = str.getElementById('color').style.color;
+        //找到color的css，并提取
+        //console.log('color: ' + cssFontColor);
+        //调试用↑
+        for (var i_color = 0; i_color < 4; i_color++){
+            //console.log('color['+ i_color +']: ' + color[i_color]);
+            //调试用↑
+            if( cssFontColor == color[i_color]){
+                flag_BodyTextColor = false;
+                flag_FontColor = false;
+                break;
+            }
+        }
+        var flag_FontBGColor = true;
+        var cssFontBGColor = str.css("background-color");
+        //var cssFontBGColor = str.getElementById('color').style.backgroundColor;
+        //找到color的css，并提取
+        //console.log('BGcolor: ' + cssFontBGColor);
+        //调试用↑
+        for (var i_BGColor = 0; i_BGColor < 4; i_BGColor++){
+            //console.log('color_RGBA['+ i_BGColor +']: ' + color_RGBA[i_BGColor]);
+            //调试用↑
+            if( cssFontBGColor == color_RGBA[i_BGColor]){
+                flag_BodyTextBGColor = false;
+                flag_FontBGColor = false;
+                break;
+            }
+        }
+        var flag_FontGGL = true;
+        if (cssFontBGColor == cssFontColor && (cssFontBGColor != '' || cssFontColor != '')){
+            flag_BodyTextGGL = false;
+            flag_FontGGL = false;
+        }
+
+        return flag_FontSize && flag_FontColor && flag_FontBGColor && flag_FontGGL;
+    }
+
+    function BodyFontFlag(){
+    //用于输出是否违规的tips
+        var TipText = '';
+        if(flag_BodyTextSize == false){
+            TipText = TipText + '<div align="center" class="FontSizeTips"><font color="red" size="4">❌字符大小超过5</font>';
+        }else{
+            TipText = TipText + '<div align="center" class="FontSizeTips"><font color="green" size="4">✅字符大小合规</font>';
+        };
+        if(flag_BodyTextColor == false){
+            TipText = TipText + '|<font color="red" size="4">❌亮色字体色</font>';
+        }else{
+            TipText = TipText + '|<font color="green" size="4">✅无亮色字体色</font>';
+        };
+        if(flag_BodyTextBGColor == false){
+            TipText = TipText + '|<font color="red" size="4">❌亮色背景色</font>';
+        }else{
+            TipText = TipText + '|<font color="green" size="4">✅无亮色背景色</font>';
+        };
+        if(flag_BodyTextGGL == false){
+            TipText = TipText + '|<font color="red" size="4">❌妨碍阅读的字体色/背景色</font></div>';
+        }else{
+            TipText = TipText + '|<font color="green" size="4">✅无其他颜色违规</font></div>';
+        };
+        jq('.t_f').html(function(i,origText){
+            return TipText + origText;
+        });
     }
 
     function isNowInServerForum(str){
@@ -219,11 +354,20 @@
         };
     }
 
+    function isNull(str){
+        str = trim(str);
+        if(str == ''){
+            return 0;
+        } else{
+            return 1;
+        }
+    }
     jq(document).ready(function(){
         if (isNowInServerForum(jq(".z").text())) {
         //用于判定是否在服务器版，不在的话就不工作
         jq(function () {
             jq('.s.xst').each(function(){
+            //用于判定页面所有服务器帖的标题
                 TrueOrFalse(ReviewTitleZZ(jq(this).text()), jq(this), '');
             });
 
@@ -247,42 +391,20 @@
             //提取标题中的服务器名称后，和模板内服务器名称做对比
             //console.log(jq(".cgtl.mbm tbody tr td").eq(0).text());
             //用于debug输出服务器名称↑
-            jq('.t_f font font font').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
-            });
-            jq('.t_f font font').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
-            });
-            jq('.t_f font').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
-            });
-            jq('.t_f div div div div').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
-            });
-            jq('.t_f div div div').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
-            });
-            jq('.t_f div div').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
-            });
-            jq('.t_f div').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
-            });
-            jq('.t_f a').each(function(){
-                OnlyFalse(BodyFontSize(jq(this)) <= 24, jq(this), '');
+
+            jq('.t_f').find('font').each(function(){
+                OnlyFalse(BodyFont_Size_Color(jq(this)), jq(this), '');
             });
             //console.log(flag_BodyTextSize);
             //用于debug输出是否有大于5号的字↑
-            if(flag_BodyTextSize == false){
-                jq('.t_f').html(function(i,origText){
-                    return '<div align="center" class="FontSizeTips"><font color="red" size="4">❌当前页面中含有字符大小超过5的文字</font></div>' + origText;
-                });
-            }else{
-                jq('.t_f').html(function(i,origText){
-                    return '<div align="center" class="FontSizeTips"><font color="green" size="4">✅当前页面字符大小合规</font></div>' + origText;
-                });
-            };
-            //用于判断字符是否超过5号（24px）
+
+            jq('.spoilerbody').each(function(){
+                jq(this).css('display','block'); 
+            })
+            //展开所有的折叠页
+            
+            BodyFontFlag();
+            //输出是否违规的tips
 
             //console.log(jq(".cgtl.mbm tbody tr td").eq(14).text());
             //用于debug输出IP地址↑
@@ -290,16 +412,25 @@
             //eq(14)为IP地址
             //使用正则来匹配IP地址
 
-            TrueOrFalsOrNull(ServerClientDownload(jq(".cgtl.mbm tbody tr td").eq(11).text()) + ServerClientDownloadSet(jq(".cgtl.mbm tbody tr td").eq(9).text()), jq(".cgtl.mbm tbody tr td").eq(11), '未在模板标注有效的客户端下载地址', '该服为纯净服，此项选填');
+            TrueOrFalsOrNull(ServerClientDownload(jq(".cgtl.mbm tbody tr td").eq(11).text()) + ServerClientDownloadSet(jq(".cgtl.mbm tbody tr td").eq(9).text()), jq(".cgtl.mbm tbody tr td").eq(11), '未在模板标注有效的客户端下载地址', '该服不需要下载专用客户端，此项选填');
             //eq(9)为服务器类型，eq(11)为客户端下载地址
+
+            ThreeDifferentTips(ServerType(jq(".cgtl.mbm tbody tr td").eq(9).text()), jq(".cgtl.mbm tbody tr td").eq(9), '该服为“纯净”类型，注意Mod/插件', '', '只允许领域服选择“其他”类型');
+            //eq(9)为服务器类型
 
             TrueOrFalsOrNull(SeverBusinessConditions(jq(".cgtl.mbm tbody tr td").eq(3).text()) + isSeverCommonwealSlogansTrue(jq('.t_f').text()), jq(".cgtl.mbm tbody tr td").eq(3), "公益服标语不合格", "需要注意其公益服标语");
             //eq(3)为服务器营利模式
             
             
+
             /**
              * ↓↓最后执行↓↓
              */
+            jq(".cgtl.mbm tbody tr td").each( function(){
+                //用于判定模板是否有空
+                    OnlyFalse(isNull(jq(this).text()), jq(this), '该项为空');
+                });
+            
             start_xx_j();
             //↑百度网盘有效性判断
         
