@@ -544,7 +544,7 @@
 
     function isNull(str){
         str = trim(str);
-        if(str == ''){
+        if(str == '' || str == '-' || str == '\\' || str == '/'){
             return 0;
         } else{
             return 1;
