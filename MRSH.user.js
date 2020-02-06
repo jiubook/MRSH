@@ -36,7 +36,7 @@
     //    document.documentElement.appendChild (s);
     //}
     //另一种加载jQuery脚本的方法
-	function ThreeDifferentTips(ele,str,info1,info2,info3){
+    function ThreeDifferentTips(ele,str,info1,info2,info3){
         if(ele > 0){
             str.html(function(i,origText){
                 return '🍃' + origText + '🍃' + Green(info1);
@@ -402,7 +402,7 @@
                 jq(this).css('display','block'); 
             })
             //展开所有的折叠页
-            
+
             BodyFontFlag();
             //输出是否违规的tips
 
