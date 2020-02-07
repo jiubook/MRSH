@@ -13,7 +13,7 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
-// @lastmodified 2020-02-07
+// @lastmodified 2020-02-08
 // @note         0.0.9 更新: 1.新增查看一服多贴快捷跳转按钮.
 // @note         0.0.8 更新: 1.修复版本号判定时因为选择其他版本而误判错误; 2.修复1.8.x等复合单版本误判问题; 3.修复背景色无法识别的错误.
 // @note         1.0.0 版本以前不会去支持一键审核，还需人工查看。
