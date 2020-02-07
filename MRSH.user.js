@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.7
+// @version      0.0.8
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -13,7 +13,8 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
-// @lastmodified 2020-02-06
+// @lastmodified 2020-02-07
+// @note         0.0.8 更新: 1.修复版本号判定时因为选择其他版本而误判错误; 2.修复1.8.x等复合单版本误判问题; 3.修复背景色无法识别的错误.
 // @note         1.0.0 版本以前不会去支持一键审核，还需人工查看。
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
@@ -257,6 +258,7 @@
         subStr = trim(subStr);
         var ServerVersion = trim(str2)
         ServerVersion = ServerVersion.split(/\s+/);
+        //ServerVersion为模板选择的版本号
         var VersionList = ['1.15.2', '1.15.1', '1.15',
                            '1.14.4', '1.14',
                            '1.13.2', '1.13.1', '1.13',
@@ -281,6 +283,10 @@
         console.log("SvL:" + ServerVersion.length);
         console.log("VlS:" + VersionList[0] + "; VlE:" + VersionList[VersionList.length - 1]);
         console.log("VlL:" + VersionList.length);
+        console.log(ZZ4.test(subStr));
+        console.log(ZZ3.test(subStr));
+        console.log(ZZ2.test(subStr));
+        console.log(ZZ1.test(subStr));
         ↑调试用
     */
         if(ZZ4.test(subStr) && ServerVersion[ServerVersion.length - 1] == '其它版本'){
@@ -289,10 +295,11 @@
         }else if(ZZ3.test(subStr)){
         //多版本的情况
             var TitleVersion3 = subStr.split('-');
+            //TitleVersion为标题版本号
             trim(TitleVersion3[0]);
             trim(TitleVersion3[1]);
             //避免有人在-的左右加空格
-            if(ServerVersionXS(TitleVersion3[1]) == ServerVersion[0] && ServerVersionXE(TitleVersion3[0]) == ServerVersion[ServerVersion.length - 1]){
+            if(ServerVersionXS(TitleVersion3[1]) == ServerVersion[0] && (ServerVersionXE(TitleVersion3[0]) == ServerVersion[ServerVersion.length - 1] || (ServerVersion[ServerVersion.length - 1] == '其它版本' && ServerVersionXE(TitleVersion3[0]) == ServerVersion[ServerVersion.length - 2]))){
             //先判定标题中的版本号是否和模板相符合
                 for(var i_3 = 0; i_3 < VersionList.length; i_3++){
                 //遍历VersionList，直到找到ServerVersion
@@ -312,7 +319,7 @@
             };
         }else if(ZZ2.test(subStr)){
         //单版本的情况
-            var TitleVersion2 = subStr;
+            var TitleVersion2 = trim(subStr);
             if (TitleVersion2 == ServerVersion[0]){
             //判定标题中的版本号是否和模板相符合
                 return 2;
@@ -322,8 +329,8 @@
             };
         }else if(ZZ1.test(subStr)){
         //单版本、复合版本的情况
-            var TitleVersion1 = subStr;
-            if(ServerVersionXS(TitleVersion1[0]) == ServerVersion[0] && ServerVersionXE(TitleVersion1[0]) == ServerVersion[ServerVersion.length - 1]){
+            var TitleVersion1 = trim(subStr);
+            if(ServerVersionXS(TitleVersion1) == ServerVersion[0] && ServerVersionXE(TitleVersion1) == ServerVersion[ServerVersion.length - 1]){
             //先判定标题中的版本号是否和模板相符合
                 for(var i_1 = 0; i_1 < VersionList.length; i_1++){
                 //遍历VersionList，直到找到ServerVersion
@@ -473,7 +480,7 @@
         for (var i_color = 0; i_color < 4; i_color++){
             //console.log('color['+ i_color +']: ' + color[i_color]);
             //调试用↑
-            if( cssFontColor == color[i_color]){
+            if((cssFontColor == color[i_color]) || (cssFontColor == color_RGBA[i_color])){
                 flag_BodyTextColor = false;
                 flag_FontColor = false;
                 break;
@@ -488,7 +495,7 @@
         for (var i_BGColor = 0; i_BGColor < 4; i_BGColor++){
             //console.log('color_RGBA['+ i_BGColor +']: ' + color_RGBA[i_BGColor]);
             //调试用↑
-            if( cssFontBGColor == color_RGBA[i_BGColor]){
+            if((cssFontBGColor == color[i_BGColor]) || (cssFontBGColor == color_RGBA[i_BGColor])){
                 flag_BodyTextBGColor = false;
                 flag_FontBGColor = false;
                 break;
