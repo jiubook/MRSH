@@ -14,7 +14,7 @@
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
 // @lastmodified 2020-02-08
-// @note         0.0.9 更新: 1.新增查看一服多贴快捷跳转按钮.
+// @note         0.0.9 更新: 1.新增查看一服多贴快捷跳转按钮; 2.修复下载地址为mcbbs.net时也判定为正确的错误.
 // @note         0.0.8 更新: 1.修复版本号判定时因为选择其他版本而误判错误; 2.修复1.8.x等复合单版本误判问题; 3.修复背景色无法识别的错误.
 // @note         1.0.0 版本以前不会去支持一键审核，还需人工查看。
 // @grant        GM_xmlhttpRequest
@@ -411,15 +411,17 @@
         var ZZ_1 = /^http(s)?\:\/\/(www.)?([\u4e00-\u9fa5]|\s|[\u0800-\u4e00]|)+(\w)*([0-9]+)*.com$/;
         var ZZ_2 = /jq\.qq\.com/;
         var ZZ_3 = /(群|君羊|裙)+/;
-        if(ZZ_3.test(SvrCD)){
+        var ZZ_4 = /mcbbs\.net/
+        if(ZZ_4.test(SvrCD)){
+            return -4;
+        }else if(ZZ_3.test(SvrCD)){
             return -3;
         }else if(ZZ_2.test(SvrCD)){
             return -2;
         }else if(ZZ_1.test(SvrCD)){
             return -1;
         }else if(ZZ1.test(SvrCD)){
-            //忽视内容，返回99
-            return 99;
+            return 1;
         }else {
             return 0;
         };
