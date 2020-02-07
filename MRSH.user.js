@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.8
+// @version      0.0.9
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -14,6 +14,7 @@
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
 // @lastmodified 2020-02-07
+// @note         0.0.9 更新: 1.新增查看一服多贴快捷跳转按钮.
 // @note         0.0.8 更新: 1.修复版本号判定时因为选择其他版本而误判错误; 2.修复1.8.x等复合单版本误判问题; 3.修复背景色无法识别的错误.
 // @note         1.0.0 版本以前不会去支持一键审核，还需人工查看。
 // @grant        GM_xmlhttpRequest
@@ -538,6 +539,15 @@
         });
     }
 
+    function CheckMultipleThread(){
+        var UserHomeHref = jq('.avtm').attr("href");
+        var ServerThreadHref = '&do=thread&from=space&fid=179';
+        var TipText = '<a href="' + UserHomeHref + ServerThreadHref + '"><font color="#A63C00" size="4">🔔检查一服多贴</font></a>|'
+        jq('.FontSizeTips').html(function(i,origText){
+            return TipText + origText;
+        });
+    }
+
     function isNowInServerForum(str){
         var ZZ1 = /服务器/;
         var ZZ2 = /gid=167/;
@@ -604,6 +614,8 @@
 
             BodyFontFlag();
             //输出是否违规的tips
+            CheckMultipleThread();
+            //输出检查一服多贴的tips
 
             //console.log(jq(".cgtl.mbm tbody tr td").eq(14).text());
             //用于debug输出IP地址↑
