@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.9
+// @version      0.0.10
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -13,10 +13,11 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
-// @lastmodified 2020-02-08
-// @note         0.0.9 更新: 1.新增查看一服多贴快捷跳转按钮; 2.修复下载地址为mcbbs.net时也判定为正确的错误.
-// @note         0.0.8 更新: 1.修复版本号判定时因为选择其他版本而误判错误; 2.修复1.8.x等复合单版本误判问题; 3.修复背景色无法识别的错误.
-// @note         1.0.0 版本以前不会去支持一键审核，还需人工查看。
+// @lastmodified 2020-02-09
+// @note         0.0.10 更新: 1.新增近似亮色字体色的判定; 2.*可能*修复了叠加多个<font color>而误判颜色的问题.
+// @note         0.0.09 更新: 1.新增查看一服多贴快捷跳转按钮; 2.修复下载地址为mcbbs.net时也判定为正确的错误.
+// @note         0.0.08 更新: 1.修复版本号判定时因为选择其他版本而误判错误; 2.修复1.8.x等复合单版本误判问题; 3.修复背景色无法识别的错误.
+// @note         1.0.00 版本以前不会去支持一键审核，还需人工查看。
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
 // @grant        GM_getValue
@@ -451,12 +452,48 @@
         };
     }
 
+    function isAllEqual(array){
+    //输入一个值，或是一个数组，判定其是否所有数值都相等;
+        return array.every(function(value,i){
+            return value == 1;
+        });
+    }
+
+    function JudgeSameColor(str1,str2){
+        //输入color1和color2，判定两个值是否在某个误差内
+        var Dvalue = 15;
+        var check = [];
+        var str1L = str1.indexOf("(");
+        var str1R = str1.indexOf(")");
+        var subStr1 = String(str1.substring(str1L + 1,str1R));
+        var Color1 = subStr1.split(', ');
+
+        var str2L = str2.indexOf("(");
+        var str2R = str2.indexOf(")");
+        var subStr2 = String(str2.substring(str2L + 1,str2R));
+        var Color2 = subStr2.split(', ');
+
+        for(var i_1 = 0; i_1 < Color1.length; i_1++){
+            if(Math.abs(Color1[i_1] - Color2[i_1]) <= Dvalue){
+                check[i_1] = 1;
+            }else{
+                check[i_1] = 0;
+            };
+        };
+        return isAllEqual(check);
+    }
+
     var flag_BodyTextSize = true;
     var flag_BodyTextColor = true;
     var flag_BodyTextBGColor = true;
     var flag_BodyTextGGL = true;
     //设置全局变量 字体大小, 字体颜色, 背景颜色, 刮刮乐
     function BodyFont_Size_Color(str){
+        if(trim(str.text()) == '' || trim(str.text()) == /(\s|\n)+/ || trim(str.find("*").children().text()) != ''){
+        //如果内容为空，或内容依旧有嵌套，直接返回true，即跳出判断;
+            return true;
+        }
+        
         var color = ['rgb(0, 255, 255)','rgb(255, 255, 0)','rgb(0, 255, 0)','rgb(255, 0, 255)']
         var color_RGBA = ['rgba(0, 255, 255, 0)','rgba(255, 255, 0, 0)','rgba(0, 255, 0, 0)','rgba(255, 0, 255, 0)']
         //按顺序，分别为亮青色, 亮黄色, 亮绿色, 亮粉色
@@ -472,18 +509,16 @@
             flag_BodyTextSize = false;
             flag_FontSize = false;
         }
-        //console.log('text: ' + str.text());
-        //调试用↑
         var flag_FontColor = true;
         var cssFontColor = str.css('color');
         //var cssFontColor = str.getElementById('color').style.color;
         //找到color的css，并提取
-        //console.log('color: ' + cssFontColor);
-        //调试用↑
         for (var i_color = 0; i_color < 4; i_color++){
-            //console.log('color['+ i_color +']: ' + color[i_color]);
-            //调试用↑
-            if((cssFontColor == color[i_color]) || (cssFontColor == color_RGBA[i_color])){
+            if((JudgeSameColor(cssFontColor, color[i_color]) || JudgeSameColor(cssFontColor, color_RGBA[i_color])) && cssFontColor !=''){
+                console.log('text: ' + str.text());
+                console.log('color: ' + cssFontColor);
+                console.log('color['+ i_color +']: ' + color[i_color] + 'RGBA['+ i_color +']: ' + color_RGBA[i_color]);
+            /*  调试用 暂时不删 ↑*/
                 flag_BodyTextColor = false;
                 flag_FontColor = false;
                 break;
@@ -493,19 +528,19 @@
         var cssFontBGColor = str.css("background-color");
         //var cssFontBGColor = str.getElementById('color').style.backgroundColor;
         //找到color的css，并提取
-        //console.log('BGcolor: ' + cssFontBGColor);
-        //调试用↑
         for (var i_BGColor = 0; i_BGColor < 4; i_BGColor++){
-            //console.log('color_RGBA['+ i_BGColor +']: ' + color_RGBA[i_BGColor]);
-            //调试用↑
-            if((cssFontBGColor == color[i_BGColor]) || (cssFontBGColor == color_RGBA[i_BGColor])){
+            if((JudgeSameColor(cssFontBGColor, color[i_BGColor]) || JudgeSameColor(cssFontBGColor, color_RGBA[i_BGColor])) && cssFontBGColor !=''){
+                console.log('text: ' + str.text());
+                console.log('BGcolor: ' + cssFontBGColor);
+                console.log('BGcolor['+ i_BGColor +']: ' + color[i_BGColor] + 'RGBA['+ i_BGColor +']: ' + color_RGBA[i_BGColor]);
+            /*  调试用 暂时不删 ↑*/
                 flag_BodyTextBGColor = false;
                 flag_FontBGColor = false;
                 break;
             }
         }
         var flag_FontGGL = true;
-        if (cssFontBGColor == cssFontColor && (cssFontBGColor != '' || cssFontColor != '')){
+        if (JudgeSameColor(cssFontBGColor, cssFontColor) && (cssFontBGColor != '' || cssFontColor != '')){
             flag_BodyTextGGL = false;
             flag_FontGGL = false;
         }
