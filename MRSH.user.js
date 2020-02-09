@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.10
+// @version      0.0.11
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -13,7 +13,8 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
-// @lastmodified 2020-02-09
+// @lastmodified 2020-02-10
+// @note         0.0.11 更新: 1.修复当<font color>中有<u>,<strong>等修饰代码时依旧跳出判定的问题。
 // @note         0.0.10 更新: 1.新增近似亮色字体色的判定; 2.*可能*修复了叠加多个<font color>而误判颜色的问题.
 // @note         0.0.09 更新: 1.新增查看一服多贴快捷跳转按钮; 2.修复下载地址为mcbbs.net时也判定为正确的错误.
 // @note         0.0.08 更新: 1.修复版本号判定时因为选择其他版本而误判错误; 2.修复1.8.x等复合单版本误判问题; 3.修复背景色无法识别的错误.
@@ -489,9 +490,16 @@
     var flag_BodyTextGGL = true;
     //设置全局变量 字体大小, 字体颜色, 背景颜色, 刮刮乐
     function BodyFont_Size_Color(str){
+        var str_ZZ1 = /font\scolor/;
+        var str_ZZ2 = /<br>/;
         if(trim(str.text()) == '' || trim(str.text()) == /(\s|\n)+/ || trim(str.find("*").children().text()) != ''){
         //如果内容为空，或内容依旧有嵌套，直接返回true，即跳出判断;
-            return true;
+        /*  console.log('flag_text: ' + str.text());
+            console.log('flag_HTML: ' + str.html());
+            调试用 ↑*/
+            if (str_ZZ1.test(str.html()) || str_ZZ2.test(str.html())){
+                return true;
+            }
         }
         
         var color = ['rgb(0, 255, 255)','rgb(255, 255, 0)','rgb(0, 255, 0)','rgb(255, 0, 255)']
