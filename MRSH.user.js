@@ -505,7 +505,7 @@
         //var cssFontColor = str.getElementById('color').style.color;
         //找到color的css，并提取
         for (var i_color = 0; i_color < 4; i_color++){
-            if((JudgeSameColor(cssFontColor, color[i_color]) || JudgeSameColor(cssFontColor, color_RGBA[i_color])) && cssFontColor !='' || !str_ZZ3.test(str.text())){
+            if((JudgeSameColor(cssFontColor, color[i_color]) || JudgeSameColor(cssFontColor, color_RGBA[i_color])) && cssFontColor !='' && !str_ZZ3.test(str.text())){
                 //判定RGB | RGBA | 是否为空 | 内容是否为多个空格
                 console.log('text: ' + str.text());
                 console.log('color: ' + cssFontColor);
