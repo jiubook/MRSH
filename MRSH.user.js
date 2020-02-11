@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.11
+// @version      0.0.12
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -13,7 +13,8 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
-// @lastmodified 2020-02-10
+// @lastmodified 2020-02-11
+// @note         0.0.12 更新: 1.精简代码，合并重复内容。
 // @note         0.0.11 更新: 1.修复当<font color>中有<u>,<strong>等修饰代码时依旧跳出判定的问题。
 // @note         0.0.10 更新: 1.新增近似亮色字体色的判定; 2.*可能*修复了叠加多个<font color>而误判颜色的问题.
 // @note         0.0.09 更新: 1.新增查看一服多贴快捷跳转按钮; 2.修复下载地址为mcbbs.net时也判定为正确的错误.
@@ -45,7 +46,7 @@
     function ThreeDifferentTips(ele,str,info1,info2,info3){
         if(ele > 0){
             str.html(function(i,origText){
-                return '🍃' + origText + '🍃' + Green(info1);
+                return '🍃' + origText + '🍃' + green(info1);
             });
         }else if(ele < 0) {
             str.html(function(i,origText){
@@ -94,7 +95,7 @@
         };
     }
 
-    function Green(str){
+    function green(str){
         if(str != ''){
             return '<font color="green">' + str + '</font>';
         }else{
@@ -168,87 +169,76 @@
             return 0;
         };
     }
+
+    var VersionList = ['1.15.2', '1.15.1', '1.15',
+                       '1.14.4', '1.14',
+                       '1.13.2', '1.13.1', '1.13',
+                       '1.12.2', '1.12.1', '1.12',
+                       '1.11.2', '1.11',
+                       '1.10.X',
+                       '1.9.4', '1.9',
+                       '1.8.X',
+                       '1.7.10', '1.7.2',
+                       '1.6.4'];
+    var VersionList_X = ['1.6.X', '1.7.X', '1.8.X', '1.9.X', '1.10.X', '1.11.X', '1.12.X', '1.13.X', '1.14.X', '1.15.X'];
+    var VersionList_x = ['1.6.x', '1.7.x', '1.8.x', '1.9.x', '1.10.x', '1.11.x', '1.12.x', '1.13.x', '1.14.x', '1.15.x'];
     function ServerVersionXS(str){
-        var VersionList = ['1.15.2', '1.15.1', '1.15',
-                           '1.14.4', '1.14',
-                           '1.13.2', '1.13.1', '1.13',
-                           '1.12.2', '1.12.1', '1.12',
-                           '1.11.2', '1.11',
-                           '1.10.X',
-                           '1.9.4', '1.9',
-                           '1.8.X',
-                           '1.7.10', '1.7.2',
-                           '1.6.4'];
-        var VersionList_X = ['1.15.X', '1.14.X', '1.13.X', '1.12.X', '1.11.X', '1.10.X', '1.9.X', '1.8.X', '1.7.X', '1.6.X'];
-        var VersionList_x = ['1.15.x', '1.14.x', '1.13.x', '1.12.x', '1.11.x', '1.10.x', '1.9.x', '1.8.x', '1.7.x', '1.6.x'];
         for(var i = 0; i < VersionList_X.length; i++){
             if((str == VersionList_X[i])||(str == VersionList_x[i])){
                 break;
             };
         };
         switch(i){
-            case 0:
-                return VersionList[VersionList.length - 20];
-            case 1:
-                return VersionList[VersionList.length - 17];
-            case 2:
-                return VersionList[VersionList.length - 15];
-            case 3:
-                return VersionList[VersionList.length - 12];
-            case 4:
-                return VersionList[VersionList.length - 9];
-            case 5:
-                return VersionList[VersionList.length - 7];
-            case 6:
-                return VersionList[VersionList.length - 6];
-            case 7:
-                return VersionList[VersionList.length - 4];
-            case 8:
-                return VersionList[VersionList.length - 3];
             case 9:
+                return VersionList[VersionList.length - 20];
+            case 8:
+                return VersionList[VersionList.length - 17];
+            case 7:
+                return VersionList[VersionList.length - 15];
+            case 6:
+                return VersionList[VersionList.length - 12];
+            case 5:
+                return VersionList[VersionList.length - 9];
+            case 4:
+                return VersionList[VersionList.length - 7];
+            case 3:
+                return VersionList[VersionList.length - 6];
+            case 2:
+                return VersionList[VersionList.length - 4];
+            case 1:
+                return VersionList[VersionList.length - 3];
+            case 0:
                 return VersionList[VersionList.length - 1];
             default:
                 return str;
         };
     }
     function ServerVersionXE(str){
-        var VersionList = ['1.15.2', '1.15.1', '1.15',
-                           '1.14.4', '1.14',
-                           '1.13.2', '1.13.1', '1.13',
-                           '1.12.2', '1.12.1', '1.12',
-                           '1.11.2', '1.11',
-                           '1.10.X',
-                           '1.9.4', '1.9',
-                           '1.8.X',
-                           '1.7.10', '1.7.2',
-                           '1.6.4'];
-        var VersionList_X = ['1.15.X', '1.14.X', '1.13.X', '1.12.X', '1.11.X', '1.10.X', '1.9.X', '1.8.X', '1.7.X', '1.6.X'];
-        var VersionList_x = ['1.15.x', '1.14.x', '1.13.x', '1.12.x', '1.11.x', '1.10.x', '1.9.x', '1.8.x', '1.7.x', '1.6.x'];
         for(var i = 0; i < VersionList_X.length; i++){
             if((str == VersionList_X[i])||(str == VersionList_x[i])){
                 break;
             };
         };
         switch(i){
-            case 0:
-                return VersionList[VersionList.length - 18];
-            case 1:
-                return VersionList[VersionList.length - 16];
-            case 2:
-                return VersionList[VersionList.length - 13];
-            case 3:
-                return VersionList[VersionList.length - 10];
-            case 4:
-                return VersionList[VersionList.length - 8];
-            case 5:
-                return VersionList[VersionList.length - 7];
-            case 6:
-                return VersionList[VersionList.length - 5];
-            case 7:
-                return VersionList[VersionList.length - 4];
-            case 8:
-                return VersionList[VersionList.length - 2];
             case 9:
+                return VersionList[VersionList.length - 18];
+            case 8:
+                return VersionList[VersionList.length - 16];
+            case 7:
+                return VersionList[VersionList.length - 13];
+            case 6:
+                return VersionList[VersionList.length - 10];
+            case 5:
+                return VersionList[VersionList.length - 8];
+            case 4:
+                return VersionList[VersionList.length - 7];
+            case 3:
+                return VersionList[VersionList.length - 5];
+            case 2:
+                return VersionList[VersionList.length - 4];
+            case 1:
+                return VersionList[VersionList.length - 2];
+            case 0:
                 return VersionList[VersionList.length - 1];
             default:
                 return str;
@@ -262,16 +252,6 @@
         var ServerVersion = trim(str2)
         ServerVersion = ServerVersion.split(/\s+/);
         //ServerVersion为模板选择的版本号
-        var VersionList = ['1.15.2', '1.15.1', '1.15',
-                           '1.14.4', '1.14',
-                           '1.13.2', '1.13.1', '1.13',
-                           '1.12.2', '1.12.1', '1.12',
-                           '1.11.2', '1.11',
-                           '1.10.X',
-                           '1.9.4', '1.9',
-                           '1.8.X',
-                           '1.7.10', '1.7.2',
-                           '1.6.4']//共20个 .length输出20
         var ZZ4 = /^\d{2}w\d{2}[a-z]$/;
         //20w05a
         var ZZ3 = /^1\.\d{1,2}(\.(\d{1,2}|X|x))?\-1\.\d{1,2}(\.(\d{1,2}|X|x))?$/;
@@ -560,34 +540,34 @@
     //用于输出是否违规的tips
         var TipText = '';
         if(flag_BodyTextSize == false){
-            TipText = TipText + '<div align="center" class="FontSizeTips"><font color="red" size="4">❌字符大小超过5</font>';
+            TipText = TipText + red('❌字符大小超过5');
         }else{
-            TipText = TipText + '<div align="center" class="FontSizeTips"><font color="green" size="4">✅字符大小合规</font>';
+            TipText = TipText + green('✅字符大小合规');
         };
         if(flag_BodyTextColor == false){
-            TipText = TipText + '|<font color="red" size="4">❌亮色字体色</font>';
+            TipText = TipText + '|' + red('❌亮色字体色');
         }else{
-            TipText = TipText + '|<font color="green" size="4">✅无亮色字体色</font>';
+            TipText = TipText + '|' + green('✅无亮色字体色');
         };
         if(flag_BodyTextBGColor == false){
-            TipText = TipText + '|<font color="red" size="4">❌亮色背景色</font>';
+            TipText = TipText + '|' + red('❌亮色背景色');
         }else{
-            TipText = TipText + '|<font color="green" size="4">✅无亮色背景色</font>';
+            TipText = TipText + '|' + green('✅无亮色背景色');
         };
         if(flag_BodyTextGGL == false){
-            TipText = TipText + '|<font color="red" size="4">❌妨碍阅读的字体色/背景色</font></div>';
+            TipText = TipText + '|' + red('❌妨碍阅读的字体色/背景色');
         }else{
-            TipText = TipText + '|<font color="green" size="4">✅无其他颜色违规</font></div>';
+            TipText = TipText + '|' + green('✅无其他颜色违规');
         };
         jq('.t_f').html(function(i,origText){
-            return TipText + origText;
+            return '<div align="center" class="FontSizeTipsDiv"><font size="4" class="FontSizeTips">' + TipText + '</font></div>' + origText;
         });
     }
 
     function CheckMultipleThread(){
         var UserHomeHref = jq('.avtm').attr("href");
         var ServerThreadHref = '&do=thread&from=space&fid=179';
-        var TipText = '<a href="' + UserHomeHref + ServerThreadHref + '"><font color="#A63C00" size="4">🔔检查一服多贴</font></a>|'
+        var TipText = '<a href="' + UserHomeHref + ServerThreadHref + '" class="CheckMultipleThread">' + orange('🔔检查一服多贴') + '</a>|'
         jq('.FontSizeTips').html(function(i,origText){
             return TipText + origText;
         });
