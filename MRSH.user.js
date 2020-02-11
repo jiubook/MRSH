@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.12
+// @version      0.0.13
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -13,9 +13,10 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
-// @lastmodified 2020-02-11
-// @note         0.0.12 更新: 1.精简代码，合并重复内容。
-// @note         0.0.11 更新: 1.修复当<font color>中有<u>,<strong>等修饰代码时依旧跳出判定的问题。
+// @lastmodified 2020-02-12
+// @note         0.0.13 更新: 1.更改了部分亮色字体颜色的判定; 2.修复了亮色判定的<div>bug.
+// @note         0.0.12 更新: 1.精简代码，合并重复内容.
+// @note         0.0.11 更新: 1.修复当<font color>中有<u>,<strong>等修饰代码时依旧跳出判定的问题.
 // @note         0.0.10 更新: 1.新增近似亮色字体色的判定; 2.*可能*修复了叠加多个<font color>而误判颜色的问题.
 // @note         0.0.09 更新: 1.新增查看一服多贴快捷跳转按钮; 2.修复下载地址为mcbbs.net时也判定为正确的错误.
 // @note         0.0.08 更新: 1.修复版本号判定时因为选择其他版本而误判错误; 2.修复1.8.x等复合单版本误判问题; 3.修复背景色无法识别的错误.
@@ -472,12 +473,14 @@
     function BodyFont_Size_Color(str){
         var str_ZZ1 = /font\scolor/;
         var str_ZZ2 = /<br>/;
-        if(trim(str.text()) == '' || trim(str.text()) == /(\s|\n)+/ || trim(str.find("*").children().text()) != ''){
-        //如果内容为空，或内容依旧有嵌套，直接返回true，即跳出判断;
+        var str_ZZ3 = /^\s\s+$/;
+        if(trim(str.text()) == '' || trim(str.find("*").children().text()) != '' ){
+        //如果内容为空，或依旧有内容时，直接返回true，即跳出判断;
         /*  console.log('flag_text: ' + str.text());
             console.log('flag_HTML: ' + str.html());
             调试用 ↑*/
-            if (str_ZZ1.test(str.html()) || str_ZZ2.test(str.html())){
+            if (str_ZZ1.test(str.html()) || (str_ZZ2.test(str.html()) && trim(str.find("*").children().text()) == '')){
+            //如果内容中还包含‘font color’，或是只有‘<br>’且无其他内容时，才跳出判断。
                 return true;
             }
         }
@@ -502,7 +505,8 @@
         //var cssFontColor = str.getElementById('color').style.color;
         //找到color的css，并提取
         for (var i_color = 0; i_color < 4; i_color++){
-            if((JudgeSameColor(cssFontColor, color[i_color]) || JudgeSameColor(cssFontColor, color_RGBA[i_color])) && cssFontColor !=''){
+            if((JudgeSameColor(cssFontColor, color[i_color]) || JudgeSameColor(cssFontColor, color_RGBA[i_color])) && cssFontColor !='' || !str_ZZ3.test(str.text())){
+                //判定RGB | RGBA | 是否为空 | 内容是否为多个空格
                 console.log('text: ' + str.text());
                 console.log('color: ' + cssFontColor);
                 console.log('color['+ i_color +']: ' + color[i_color] + 'RGBA['+ i_color +']: ' + color_RGBA[i_color]);
