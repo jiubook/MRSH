@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.13
+// @version      0.0.13b
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -14,7 +14,7 @@
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
 // @lastmodified 2020-02-12
-// @note         0.0.13 更新: 1.更改了部分亮色字体颜色的判定; 2.修复了亮色判定的<div>bug.
+// @note         0.0.13 更新: 1.更改了部分亮色字体颜色的判定; 2.修复了亮色判定的<div>bug. b更新: 1.细小的判定更改.
 // @note         0.0.12 更新: 1.精简代码，合并重复内容.
 // @note         0.0.11 更新: 1.修复当<font color>中有<u>,<strong>等修饰代码时依旧跳出判定的问题.
 // @note         0.0.10 更新: 1.新增近似亮色字体色的判定; 2.*可能*修复了叠加多个<font color>而误判颜色的问题.
