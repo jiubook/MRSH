@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.13b
+// @version      0.0.14
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -13,7 +13,8 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
-// @lastmodified 2020-02-12
+// @lastmodified 2020-02-29
+// @note         0.0.14 更新: 1.新增一键通过功能，还在测试稳定性中。
 // @note         0.0.13 更新: 1.更改了部分亮色字体颜色的判定; 2.修复了亮色判定的<div>bug. b更新: 1.细小的判定更改.
 // @note         0.0.12 更新: 1.精简代码，合并重复内容.
 // @note         0.0.11 更新: 1.修复当<font color>中有<u>,<strong>等修饰代码时依旧跳出判定的问题.
@@ -544,24 +545,24 @@
     //用于输出是否违规的tips
         var TipText = '';
         if(flag_BodyTextSize == false){
-            TipText = TipText + red('❌字符大小超过5');
+            TipText = TipText + red('❌字号大于5');
         }else{
-            TipText = TipText + green('✅字符大小合规');
+            TipText = TipText + green('✅字号合规');
         };
         if(flag_BodyTextColor == false){
-            TipText = TipText + '|' + red('❌亮色字体色');
+            TipText = TipText + '|' + red('❌亮色字体');
         }else{
-            TipText = TipText + '|' + green('✅无亮色字体色');
+            TipText = TipText + '|' + green('✅亮色字体');
         };
         if(flag_BodyTextBGColor == false){
-            TipText = TipText + '|' + red('❌亮色背景色');
+            TipText = TipText + '|' + red('❌亮色背景');
         }else{
-            TipText = TipText + '|' + green('✅无亮色背景色');
+            TipText = TipText + '|' + green('✅亮色背景');
         };
         if(flag_BodyTextGGL == false){
-            TipText = TipText + '|' + red('❌妨碍阅读的字体色/背景色');
+            TipText = TipText + '|' + red('❌妨碍阅读的字体/背景');
         }else{
-            TipText = TipText + '|' + green('✅无其他颜色违规');
+            TipText = TipText + '|' + green('✅其他颜色违规');
         };
         jq('.t_f').html(function(i,origText){
             return '<div align="center" class="FontSizeTipsDiv"><font size="4" class="FontSizeTips">' + TipText + '</font></div>' + origText;
@@ -569,11 +570,20 @@
     }
 
     function CheckMultipleThread(){
+    //一服多贴tips
         var UserHomeHref = jq('.avtm').attr("href");
         var ServerThreadHref = '&do=thread&from=space&fid=179';
         var TipText = '<a href="' + UserHomeHref + ServerThreadHref + '" class="CheckMultipleThread">' + orange('🔔检查一服多贴') + '</a>|'
         jq('.FontSizeTips').html(function(i,origText){
             return TipText + origText;
+        });
+    }
+
+    function BtnPass(){
+    //一键通过btn
+        var BtnPassText = '<button class="BtnPass">'+ green('通过') +'</button>|'
+        jq('.FontSizeTips').html(function(i,origText){
+            return BtnPassText + origText;
         });
     }
 
@@ -596,6 +606,35 @@
             return 1;
         }
     }
+    
+    var ServerTypeslist = ["公告", "生存", "创造", "混合（下面注明）", "战争", "RPG", "小游戏"]
+    function ServerMoveType(str){
+        for(var i = 0; i < ServerTypeslist.length; i++){
+            if(str == ServerTypeslist[i]){
+                console.log(i);
+                return i;
+            };
+        };
+    }
+
+    function OneKeyPass(){
+        modthreads(2, 'move')
+            //移动
+        setTimeout(function (){
+            jq("#moveto").trigger("change");
+            setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(1)').prop("selected", true)}, 250);
+            //选择服务器版
+            setTimeout(function (){jq("#moveto").trigger("change")}, 500);
+            //setTimeout(function (){jq('#threadtypes option:eq('+ ServerMoveType(jq('.cgtl.mbm tbody tr td').eq(4).text()) + ')').attr("selected", true)}, 500);
+            setTimeout(function (){jq('#threadtypes option:eq('+ ServerMoveType(jq('.cgtl.mbm tbody tr td').eq(4).text()) + ')').prop("selected", true)}, 750);
+            //选择生存
+            setTimeout(function (){jq("textarea#reason").val('通过')}, 750);
+            //填充文本“通过”
+            setTimeout(function (){jq("button#modsubmit").click()}, 1000)
+            //延迟1秒点击确认
+        }, 1000)
+    }
+
     jq(document).ready(function(){
         if (isNowInServerForum(jq(".bm.cl").html())) {
         //用于判定是否在服务器版，不在的话就不工作
@@ -661,6 +700,14 @@
             TrueOrFalsOrNull(SeverBusinessConditions(jq(".cgtl.mbm tbody tr td").eq(3).text()) + isSeverCommonwealSlogansTrue(jq('.t_f').text()), jq(".cgtl.mbm tbody tr td").eq(3), "公益服标语不合格", "需要注意其公益服标语");
             //eq(3)为服务器营利模式
 
+            BtnPass();
+            //创建通过按钮
+
+            jq(".BtnPass").click(function() {
+                OneKeyPass();
+            })
+            //modthreads(4)
+            //关闭
 
             /**
              * ↓↓最后执行↓↓
