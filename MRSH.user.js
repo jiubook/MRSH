@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.14
+// @version      0.0.15
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -13,7 +13,8 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
-// @lastmodified 2020-02-29
+// @lastmodified 2020-03-01
+// @note         0.0.15 更新: 1.修复了标题单版本但模板选择多版本时不报错的bug
 // @note         0.0.14 更新: 1.新增一键通过功能，还在测试稳定性中。
 // @note         0.0.13 更新: 1.更改了部分亮色字体颜色的判定; 2.修复了亮色判定的<div>bug. b更新: 1.细小的判定更改.
 // @note         0.0.12 更新: 1.精简代码，合并重复内容.
@@ -305,6 +306,10 @@
         }else if(ZZ2.test(subStr)){
         //单版本的情况
             var TitleVersion2 = trim(subStr);
+            if (ServerVersion.length > 1 ){
+            //模板选择多版本，标题选择单版本的情况 return -1
+                return -1;
+            }
             if (TitleVersion2 == ServerVersion[0]){
             //判定标题中的版本号是否和模板相符合
                 return 2;
