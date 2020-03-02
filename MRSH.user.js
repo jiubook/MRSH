@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.15
+// @version      0.0.16
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -13,7 +13,8 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
-// @lastmodified 2020-03-01
+// @lastmodified 2020-03-02
+// @note         0.0.16 更新: 1.修改了亮色字体判断逻辑
 // @note         0.0.15 更新: 1.修复了标题单版本但模板选择多版本时不报错的bug
 // @note         0.0.14 更新: 1.新增一键通过功能，还在测试稳定性中。
 // @note         0.0.13 更新: 1.更改了部分亮色字体颜色的判定; 2.修复了亮色判定的<div>bug. b更新: 1.细小的判定更改.
@@ -479,18 +480,15 @@
     function BodyFont_Size_Color(str){
         var str_ZZ1 = /font\scolor/;
         var str_ZZ2 = /<br>/;
-        var str_ZZ3 = /^\s\s+$/;
-        if(trim(str.text()) == '' || trim(str.find("*").children().text()) != '' ){
-        //如果内容为空，或依旧有内容时，直接返回true，即跳出判断;
-        /*  console.log('flag_text: ' + str.text());
-            console.log('flag_HTML: ' + str.html());
-            调试用 ↑*/
-            if (str_ZZ1.test(str.html()) || (str_ZZ2.test(str.html()) && trim(str.find("*").children().text()) == '')){
-            //如果内容中还包含‘font color’，或是只有‘<br>’且无其他内容时，才跳出判断。
-                return true;
-            }
+        var str_ZZ3 = /^\s+$/;
+        if (str_ZZ1.test(String(str.html()))){
+            //如果内容中还包含‘font color’，跳出判断。
+            return true;
+        }else if(str_ZZ2.test(str.html()) && trim(str.find("*").children().text()) == ''){
+            //如果内容中只有‘<br>’且无其他内容时，跳出判断。
+            return true;
         }
-        
+        /* 旧版判断 if(trim(str.text()) == '' || trim(str.find("*").children().text()) != '' ) //如果内容为空，或依旧有内容时，直接返回true，即跳出判断; */
         var color = ['rgb(0, 255, 255)','rgb(255, 255, 0)','rgb(0, 255, 0)','rgb(255, 0, 255)']
         var color_RGBA = ['rgba(0, 255, 255, 0)','rgba(255, 255, 0, 0)','rgba(0, 255, 0, 0)','rgba(255, 0, 255, 0)']
         //按顺序，分别为亮青色, 亮黄色, 亮绿色, 亮粉色
@@ -515,7 +513,9 @@
                 //判定RGB | RGBA | 是否为空 | 内容是否为多个空格
                 console.log('text: ' + str.text());
                 console.log('color: ' + cssFontColor);
+                console.log('flag_HTML: ' + String(str.html()));
                 console.log('color['+ i_color +']: ' + color[i_color] + 'RGBA['+ i_color +']: ' + color_RGBA[i_color]);
+                console.log(str_ZZ3.test(str.text()));
             /*  调试用 暂时不删 ↑*/
                 flag_BodyTextColor = false;
                 flag_FontColor = false;
@@ -530,6 +530,7 @@
             if((JudgeSameColor(cssFontBGColor, color[i_BGColor]) || JudgeSameColor(cssFontBGColor, color_RGBA[i_BGColor])) && cssFontBGColor !=''){
                 console.log('text: ' + str.text());
                 console.log('BGcolor: ' + cssFontBGColor);
+                console.log('flag_HTML: ' + String(str.html()));
                 console.log('BGcolor['+ i_BGColor +']: ' + color[i_BGColor] + 'RGBA['+ i_BGColor +']: ' + color_RGBA[i_BGColor]);
             /*  调试用 暂时不删 ↑*/
                 flag_BodyTextBGColor = false;
