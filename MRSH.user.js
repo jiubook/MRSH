@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.16
+// @version      0.0.17
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -13,17 +13,19 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
-// @lastmodified 2020-03-02
-// @note         0.0.16 更新: 1.修改了亮色字体判断逻辑
+// @lastmodified 2020-03-06
+// @note         0.0.17 更新: 1.新增了正常版本至快照版本的模板多版本判断; 2.修改了错别字 “其它” -> “其他”; 3.新增了标题对快照版本的判断
+// @note         0.0.16 更新: 1.更改了亮色字体判断逻辑
 // @note         0.0.15 更新: 1.修复了标题单版本但模板选择多版本时不报错的bug
-// @note         0.0.14 更新: 1.新增一键通过功能，还在测试稳定性中。
-// @note         0.0.13 更新: 1.更改了部分亮色字体颜色的判定; 2.修复了亮色判定的<div>bug. b更新: 1.细小的判定更改.
-// @note         0.0.12 更新: 1.精简代码，合并重复内容.
-// @note         0.0.11 更新: 1.修复当<font color>中有<u>,<strong>等修饰代码时依旧跳出判定的问题.
-// @note         0.0.10 更新: 1.新增近似亮色字体色的判定; 2.*可能*修复了叠加多个<font color>而误判颜色的问题.
-// @note         0.0.09 更新: 1.新增查看一服多贴快捷跳转按钮; 2.修复下载地址为mcbbs.net时也判定为正确的错误.
-// @note         0.0.08 更新: 1.修复版本号判定时因为选择其他版本而误判错误; 2.修复1.8.x等复合单版本误判问题; 3.修复背景色无法识别的错误.
-// @note         1.0.00 版本以前不会去支持一键审核，还需人工查看。
+// @note         0.0.14 更新: 1.新增了一键通过功能，还在测试稳定性中。
+// @note         0.0.13 更新: 1.更改了部分亮色字体颜色的判定; 2.修复了亮色判定的<div>bug. 0.0.13b 更新: 1.细小的判定更改.
+// @note         0.0.12 更新: 1.精简了代码，合并重复内容.
+// @note         0.0.11 更新: 1.修复了当<font color>中有<u>,<strong>等修饰代码时依旧跳出判定的问题.
+// @note         0.0.10 更新: 1.新增了近似亮色字体色的判定; 2.*可能*修复了叠加多个<font color>而误判颜色的问题.
+// @note         0.0.09 更新: 1.新增了查看一服多贴快捷跳转按钮; 2.修复了下载地址为mcbbs.net时也判定为正确的错误.
+// @note         0.0.08 更新: 1.修复了版本号判定时因为选择其他版本而误判错误; 2.修复了1.8.x等复合单版本误判问题; 3.修复了背景色无法识别的错误.
+// @note         新增、更改、修复、精简、*可能*
+// @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
 // @grant        GM_getValue
@@ -127,7 +129,7 @@
     function ReviewTitleZZ(str){
         //正则判断标题
         //var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([\u4e00-\u9fa5]|\w|\s|[\u0800-\u4e00])*(\s|)——(\s|).[^\[]*\[(\d|\.|X|x|\-)+]$/;
-        var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([0-9a-zA-Z\u2160-\u217f\u3040-\u30ff\u31f0-\u31ff\u4e00-\u9fa5]|\s)+——([^\u2014]|\s)+\[(\-?1\.\d{1,2}(\.(\d{1,2}|X|x))?){1,2}\]$/;
+        var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([0-9a-zA-Z\u2160-\u217f\u3040-\u30ff\u31f0-\u31ff\u4e00-\u9fa5]|\s)+——([^\u2014]|\s)+\[(\-?((1\.\d{1,2}(\.(\d{1,2}|X|x))?)|(\d{2}w\d{2}[a-z]))){1,2}\]$/;
         if (ZZ.test(str)){
             return true;
         }else{
@@ -256,6 +258,8 @@
         var ServerVersion = trim(str2)
         ServerVersion = ServerVersion.split(/\s+/);
         //ServerVersion为模板选择的版本号
+        var ZZ5 = /^1\.\d{1,2}(\.(\d{1,2}|X|x))?\-\d{2}w\d{2}[a-z]$/
+        //1.7.2-20w05a
         var ZZ4 = /^\d{2}w\d{2}[a-z]$/;
         //20w05a
         var ZZ3 = /^1\.\d{1,2}(\.(\d{1,2}|X|x))?\-1\.\d{1,2}(\.(\d{1,2}|X|x))?$/;
@@ -270,14 +274,42 @@
         console.log("SvL:" + ServerVersion.length);
         console.log("VlS:" + VersionList[0] + "; VlE:" + VersionList[VersionList.length - 1]);
         console.log("VlL:" + VersionList.length);
+        console.log(ZZ5.test(subStr));
         console.log(ZZ4.test(subStr));
         console.log(ZZ3.test(subStr));
         console.log(ZZ2.test(subStr));
         console.log(ZZ1.test(subStr));
+        
         ↑调试用
     */
-        if(ZZ4.test(subStr) && ServerVersion[ServerVersion.length - 1] == '其它版本'){
-        //其他版本的情况
+        if(ZZ5.test(subStr) && ServerVersion[ServerVersion.length - 1] == '其他版本'){
+        //1.7.2-20w05a 其他版本的情况
+            var TitleVersion5 = subStr.split('-');
+            //TitleVersion为标题版本号
+            trim(TitleVersion5[0]);
+            trim(TitleVersion5[1]);
+            //避免有人在-的左右加空格
+            if(ServerVersionXS(TitleVersion5[0]) == ServerVersion[0]){
+                //判定标题中 左侧的版本号 是否和 模板第一个 相符合
+                for(var i_5 = 0; i_5 < VersionList.length; i_5++){
+                //遍历VersionList，直到找到ServerVersion位置
+                    if(ServerVersion[0] == VersionList[i_5]){
+                        break;
+                    };
+                };
+                if(ServerVersion[ServerVersion.length - 2] == VersionList[i_5 + ServerVersion.length - 2]){
+                //确认 模板倒数第二个项 是否漏选
+                    return 5;
+                }else{
+                //缺项漏项 return -2
+                    return -2;
+                };
+            }else{
+                //标题中的版本号和模板不符 就直接return -3
+                return -3;
+            };
+        }else if(ZZ4.test(subStr) && ServerVersion[ServerVersion.length - 1] == '其他版本'){
+        //20w05a 其他版本的情况
             return 4;
         }else if(ZZ3.test(subStr)){
         //多版本的情况
@@ -286,7 +318,7 @@
             trim(TitleVersion3[0]);
             trim(TitleVersion3[1]);
             //避免有人在-的左右加空格
-            if(ServerVersionXS(TitleVersion3[1]) == ServerVersion[0] && (ServerVersionXE(TitleVersion3[0]) == ServerVersion[ServerVersion.length - 1] || (ServerVersion[ServerVersion.length - 1] == '其它版本' && ServerVersionXE(TitleVersion3[0]) == ServerVersion[ServerVersion.length - 2]))){
+            if(ServerVersionXS(TitleVersion3[1]) == ServerVersion[0] && (ServerVersionXE(TitleVersion3[0]) == ServerVersion[ServerVersion.length - 1] || (ServerVersion[ServerVersion.length - 1] == '其他版本' && ServerVersionXE(TitleVersion3[0]) == ServerVersion[ServerVersion.length - 2]))){
             //先判定标题中的版本号是否和模板相符合
                 for(var i_3 = 0; i_3 < VersionList.length; i_3++){
                 //遍历VersionList，直到找到ServerVersion
