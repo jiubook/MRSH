@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.17
+// @version      0.0.18
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -13,7 +13,8 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
-// @lastmodified 2020-03-06
+// @lastmodified 2020-03-13
+// @note         0.0.18 更新: 1.修复了无法自动分类为"小游戏（mini game）"的问题
 // @note         0.0.17 更新: 1.新增了正常版本至快照版本的模板多版本判断; 2.修改了错别字 “其它” -> “其他”; 3.新增了标题对快照版本的判断
 // @note         0.0.16 更新: 1.更改了亮色字体判断逻辑
 // @note         0.0.15 更新: 1.修复了标题单版本但模板选择多版本时不报错的bug
@@ -645,7 +646,7 @@
         }
     }
     
-    var ServerTypeslist = ["公告", "生存", "创造", "混合（下面注明）", "战争", "RPG", "小游戏"]
+    var ServerTypeslist = ["公告", "生存", "创造", "混合（下面注明）", "战争", "RPG", "小游戏（Mini Game）"]
     function ServerMoveType(str){
         for(var i = 0; i < ServerTypeslist.length; i++){
             if(str == ServerTypeslist[i]){
