@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
 // @namespace    https://space.bilibili.com/1501743
-// @version      0.0.18
+// @version      0.0.19
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @match        *://www.mcbbs.net/thread-*
@@ -13,7 +13,8 @@
 // @match        *://www.mcbbs.net/forum-362*
 // @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @create       2020-01-28
-// @lastmodified 2020-03-13
+// @lastmodified 2020-03-19
+// @note         0.0.19 更新: 1.更改了亮色字判断逻辑(小改动)
 // @note         0.0.18 更新: 1.修复了无法自动分类为"小游戏（mini game）"的问题
 // @note         0.0.17 更新: 1.新增了正常版本至快照版本的模板多版本判断; 2.修改了错别字 “其它” -> “其他”; 3.新增了标题对快照版本的判断
 // @note         0.0.16 更新: 1.更改了亮色字体判断逻辑
@@ -512,7 +513,7 @@
     //设置全局变量 字体大小, 字体颜色, 背景颜色, 刮刮乐
     function BodyFont_Size_Color(str){
         var str_ZZ1 = /font\scolor/;
-        var str_ZZ2 = /<br>/;
+        var str_ZZ2 = /^<br>$/;
         var str_ZZ3 = /^\s+$/;
         if (str_ZZ1.test(String(str.html()))){
             //如果内容中还包含‘font color’，跳出判断。
