@@ -1,17 +1,12 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @namespace    https://space.bilibili.com/1501743
 // @version      0.0.19
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
-// @match        *://www.mcbbs.net/thread-*
-// @match        *://www.mcbbs.net/forum.php?mod=viewthread*
-// @match        *://www.mcbbs.net/forum-serverpending*
-// @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=296*
-// @match        *://www.mcbbs.net/forum-server*
-// @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=179*
-// @match        *://www.mcbbs.net/forum-362*
-// @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
+// @namespace    https://space.bilibili.com/1501743
+// @mainpage     https://greasyfork.org/zh-CN/scripts/395841-mcbbsreviewserverhelper/
+// @supportURL   https://greasyfork.org/zh-CN/scripts/395841-mcbbsreviewserverhelper/feedback
+// @license      GNU General Public License v3.0
 // @create       2020-01-28
 // @lastmodified 2020-03-19
 // @note         0.0.19 更新: 1.更改了亮色字判断逻辑(小改动)
@@ -28,11 +23,18 @@
 // @note         0.0.08 更新: 1.修复了版本号判定时因为选择其他版本而误判错误; 2.修复了1.8.x等复合单版本误判问题; 3.修复了背景色无法识别的错误.
 // @note         新增、更改、修复、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
+// @match        *://www.mcbbs.net/thread-*
+// @match        *://www.mcbbs.net/forum.php?mod=viewthread*
+// @match        *://www.mcbbs.net/forum-serverpending*
+// @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=296*
+// @match        *://www.mcbbs.net/forum-server*
+// @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=179*
+// @match        *://www.mcbbs.net/forum-362*
+// @match        *://www.mcbbs.net/forum.php?mod=forumdisplay&fid=362*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @license      GNU General Public License v3.0
 // @require      https://cdn.staticfile.org/jquery/1.12.4/jquery.min.js
 // @require 	 https://greasyfork.org/scripts/376401-findandreplacedomtext/code/findAndReplaceDOMText.js?version=660038
 // @require      https://greasyfork.org/scripts/376402-ddxuf/code/ddxuf.js?version=661422
