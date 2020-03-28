@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.19
+// @version      0.0.20
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -8,13 +8,14 @@
 // @supportURL   https://greasyfork.org/zh-CN/scripts/395841-mcbbsreviewserverhelper/feedback
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-03-19
-// @note         0.0.19 更新: 1.更改了亮色字判断逻辑(小改动)
-// @note         0.0.18 更新: 1.修复了无法自动分类为"小游戏（mini game）"的问题
-// @note         0.0.17 更新: 1.新增了正常版本至快照版本的模板多版本判断; 2.修改了错别字 “其它” -> “其他”; 3.新增了标题对快照版本的判断
-// @note         0.0.16 更新: 1.更改了亮色字体判断逻辑
-// @note         0.0.15 更新: 1.修复了标题单版本但模板选择多版本时不报错的bug
-// @note         0.0.14 更新: 1.新增了一键通过功能，还在测试稳定性中。
+// @lastmodified 2020-03-29
+// @note         0.0.20 更新: 1.修复了网络不稳定时一键通过按钮无分类、误分类的问题.
+// @note         0.0.19 更新: 1.更改了亮色字判断逻辑(小改动).
+// @note         0.0.18 更新: 1.修复了无法自动分类为"小游戏（mini game）"的问题.
+// @note         0.0.17 更新: 1.新增了正常版本至快照版本的模板多版本判断; 2.修改了错别字 “其它” -> “其他”; 3.新增了标题对快照版本的判断.
+// @note         0.0.16 更新: 1.更改了亮色字体判断逻辑.
+// @note         0.0.15 更新: 1.修复了标题单版本但模板选择多版本时不报错的bug.
+// @note         0.0.14 更新: 1.新增了一键通过功能，还在测试稳定性中.
 // @note         0.0.13 更新: 1.更改了部分亮色字体颜色的判定; 2.修复了亮色判定的<div>bug. 0.0.13b 更新: 1.细小的判定更改.
 // @note         0.0.12 更新: 1.精简了代码，合并重复内容.
 // @note         0.0.11 更新: 1.修复了当<font color>中有<u>,<strong>等修饰代码时依旧跳出判定的问题.
@@ -650,7 +651,9 @@
     }
     
     var ServerTypeslist = ["公告", "生存", "创造", "混合（下面注明）", "战争", "RPG", "小游戏（Mini Game）"]
+    var ServerTypesValue = [360, 358, 359, 361, 395, 397, 2423]
     function ServerMoveType(str){
+    //输入分类名(str)，返回分类为第几项(int)
         for(var i = 0; i < ServerTypeslist.length; i++){
             if(str == ServerTypeslist[i]){
                 console.log(i);
@@ -658,22 +661,83 @@
             };
         };
     }
+    function ServerMoveValue(str){
+    //输入分类名(str)，返回分类value(int)
+        for(var i = 0; i < ServerTypeslist.length; i++){
+            if(str == ServerTypeslist[i]){
+                console.log(i);
+                return ServerTypesValue[i];
+            };
+        };
+    }
 
-    function OneKeyPass(){
-        modthreads(2, 'move')
-            //移动
-        setTimeout(function (){
+    var Plate_flag = false;
+    var Type_flag = false;
+    var Check_Ping = 1;
+    function checkServerType(){
+        //确认版块选项是否正确(本函数为无限循环函数，首次延迟0.25秒，之后每次执行增加延迟0.25秒)
+        if(Plate_flag == false){
+            console.log('3');
             jq("#moveto").trigger("change");
-            setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(1)').prop("selected", true)}, 250);
+            setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(1)').prop("selected", true)}, 250 * Check_Ping);
             //选择服务器版
-            setTimeout(function (){jq("#moveto").trigger("change")}, 500);
+            setTimeout(function (){
+                if(jq('#moveto').val() == 179){
+                //判断是否选择了服务器版
+                    Plate_flag = true;
+                }else{
+                    Check_Ping++;
+                    setTimeout(function (){checkServerType();}, 250 * Check_Ping);
+                }
+            }, 250 * Check_Ping);
+        };
+    }
+    function checkServerMoveValue(){
+        //确认分类选项是否正确(本函数为无限循环函数，首次延迟0.25秒，之后每次执行增加延迟0.25秒)
+        if(Type_flag == false){
+            console.log('4');
+            jq("#moveto").trigger("change")
             //setTimeout(function (){jq('#threadtypes option:eq('+ ServerMoveType(jq('.cgtl.mbm tbody tr td').eq(4).text()) + ')').attr("selected", true)}, 500);
-            setTimeout(function (){jq('#threadtypes option:eq('+ ServerMoveType(jq('.cgtl.mbm tbody tr td').eq(4).text()) + ')').prop("selected", true)}, 750);
+            setTimeout(function (){jq('#threadtypes option:eq('+ ServerMoveType(jq('.cgtl.mbm tbody tr td').eq(4).text()) + ')').prop("selected", true)}, 250 * Check_Ping);
             //选择生存
-            setTimeout(function (){jq("textarea#reason").val('通过')}, 750);
+            setTimeout(function (){
+            //判断是否选择了对应分类
+                if( jq('select[name="threadtypeid"]').val() == ServerMoveValue(jq('.cgtl.mbm tbody tr td').eq(4).text()) ){
+                    Type_flag = true;
+                }else{
+                    Check_Ping++;
+                    setTimeout(function (){checkServerMoveValue();}, 250 * Check_Ping);
+                }
+            }, 250 * Check_Ping);
+        };
+    }
+    function checkMoveTrue(){
+        //确认选项是否都正确(本函数为无限循环函数，每次执行延迟0.25秒)
+        if (Type_flag == true && Plate_flag == true){
+            console.log('5');
+            jq("textarea#reason").val('通过')
             //填充文本“通过”
-            setTimeout(function (){jq("button#modsubmit").click()}, 1000)
-            //延迟1秒点击确认
+            setTimeout(function (){jq("button#modsubmit").click()}, 250);
+            //延迟0.25秒点击确认
+        };
+        setTimeout(function (){checkMoveTrue();}, 250);
+    }
+    function OneKeyPass(){
+        //一键通过开始
+        modthreads(2, 'move')
+        //执行“移动”，弹出操作窗口
+        setTimeout(function (){
+            //等待1秒后执行
+            checkServerType();
+            //选择版块
+            setTimeout(function (){
+                checkServerMoveValue();
+                //选择分类
+                setTimeout(function (){
+                    checkMoveTrue();
+                    //执行“通过”
+                }, 250);
+            }, 250);
         }, 1000)
     }
 
