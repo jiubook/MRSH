@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.20
+// @version      0.0.21
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -8,7 +8,8 @@
 // @supportURL   https://greasyfork.org/zh-CN/scripts/395841-mcbbsreviewserverhelper/feedback
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-03-29
+// @lastmodified 2020-04-02
+// @note         0.0.21 更新: 1.更改了妨碍阅读的字体颜色判定; 2.新增了其他版本的亮绿色判定.
 // @note         0.0.20 更新: 1.修复了网络不稳定时一键通过按钮无分类、误分类的问题.
 // @note         0.0.19 更新: 1.更改了亮色字判断逻辑(小改动).
 // @note         0.0.18 更新: 1.修复了无法自动分类为"小游戏（mini game）"的问题.
@@ -284,7 +285,6 @@
         console.log(ZZ3.test(subStr));
         console.log(ZZ2.test(subStr));
         console.log(ZZ1.test(subStr));
-        
         ↑调试用
     */
         if(ZZ5.test(subStr) && ServerVersion[ServerVersion.length - 1] == '其他版本'){
@@ -518,17 +518,24 @@
         var str_ZZ1 = /font\scolor/;
         var str_ZZ2 = /^<br>$/;
         var str_ZZ3 = /^\s+$/;
+        var str_ZZ4 = /^\s$/;
         if (str_ZZ1.test(String(str.html()))){
             //如果内容中还包含‘font color’，跳出判断。
+            //console.log('text: ' + str.text());
+            //console.log('color: ' + cssFontColor);
+            //console.log('flag_HTML: ' + String(str.html()));
             return true;
         }else if(str_ZZ2.test(str.html()) && trim(str.find("*").children().text()) == ''){
             //如果内容中只有‘<br>’且无其他内容时，跳出判断。
+            //console.log('1_text: ' + str.text());
+            //console.log('1_color: ' + cssFontColor);
+            //console.log('1_flag_HTML: ' + String(str.html()));
             return true;
         }
         /* 旧版判断 if(trim(str.text()) == '' || trim(str.find("*").children().text()) != '' ) //如果内容为空，或依旧有内容时，直接返回true，即跳出判断; */
-        var color = ['rgb(0, 255, 255)','rgb(255, 255, 0)','rgb(0, 255, 0)','rgb(255, 0, 255)']
-        var color_RGBA = ['rgba(0, 255, 255, 0)','rgba(255, 255, 0, 0)','rgba(0, 255, 0, 0)','rgba(255, 0, 255, 0)']
-        //按顺序，分别为亮青色, 亮黄色, 亮绿色, 亮粉色
+        var color = ['rgb(0, 255, 255)','rgb(255, 255, 0)','rgb(0, 255, 0)','rgb(36, 255, 36)','rgb(255, 0, 255)']
+        var color_RGBA = ['rgba(0, 255, 255, 0)','rgba(255, 255, 0, 0)','rgba(0, 255, 0, 0)','rgba(36, 255, 36, 0)','rgba(255, 0, 255, 0)']
+        //按顺序，分别为亮青色, 亮黄色, 亮绿色, 亮绿色, 亮粉色
         var flag_FontSize = true;
         var cssFontSize = str.css('font-size');
         //找到font-size的css，并提取
@@ -545,13 +552,13 @@
         var cssFontColor = str.css('color');
         //var cssFontColor = str.getElementById('color').style.color;
         //找到color的css，并提取
-        for (var i_color = 0; i_color < 4; i_color++){
+        for (var i_color = 0; i_color < color.length; i_color++){
             if((JudgeSameColor(cssFontColor, color[i_color]) || JudgeSameColor(cssFontColor, color_RGBA[i_color])) && cssFontColor !='' && !str_ZZ3.test(str.text())){
                 //判定RGB | RGBA | 是否为空 | 内容是否为多个空格
-                console.log('text: ' + str.text());
-                console.log('color: ' + cssFontColor);
-                console.log('flag_HTML: ' + String(str.html()));
-                console.log('color['+ i_color +']: ' + color[i_color] + 'RGBA['+ i_color +']: ' + color_RGBA[i_color]);
+                console.log('2_text: ' + str.text());
+                console.log('2_color: ' + cssFontColor);
+                console.log('2_flag_HTML: ' + String(str.html()));
+                console.log('2_color['+ i_color +']: ' + color[i_color] + 'RGBA['+ i_color +']: ' + color_RGBA[i_color]);
                 console.log(str_ZZ3.test(str.text()));
             /*  调试用 暂时不删 ↑*/
                 flag_BodyTextColor = false;
@@ -563,12 +570,12 @@
         var cssFontBGColor = str.css("background-color");
         //var cssFontBGColor = str.getElementById('color').style.backgroundColor;
         //找到color的css，并提取
-        for (var i_BGColor = 0; i_BGColor < 4; i_BGColor++){
-            if((JudgeSameColor(cssFontBGColor, color[i_BGColor]) || JudgeSameColor(cssFontBGColor, color_RGBA[i_BGColor])) && cssFontBGColor !=''){
-                console.log('text: ' + str.text());
-                console.log('BGcolor: ' + cssFontBGColor);
-                console.log('flag_HTML: ' + String(str.html()));
-                console.log('BGcolor['+ i_BGColor +']: ' + color[i_BGColor] + 'RGBA['+ i_BGColor +']: ' + color_RGBA[i_BGColor]);
+        for (var i_BGColor = 0; i_BGColor < color_RGBA.length; i_BGColor++){
+            if((JudgeSameColor(cssFontBGColor, color[i_BGColor]) || JudgeSameColor(cssFontBGColor, color_RGBA[i_BGColor])) && cssFontBGColor !='' && !str_ZZ4.test(str.text())){
+                console.log('3_text: ' + str.text());
+                console.log('3_BGcolor: ' + cssFontBGColor);
+                console.log('3_flag_HTML: ' + String(str.html()));
+                console.log('3_BGcolor['+ i_BGColor +']: ' + color[i_BGColor] + 'RGBA['+ i_BGColor +']: ' + color_RGBA[i_BGColor]);
             /*  调试用 暂时不删 ↑*/
                 flag_BodyTextBGColor = false;
                 flag_FontBGColor = false;
@@ -576,7 +583,12 @@
             }
         }
         var flag_FontGGL = true;
-        if (JudgeSameColor(cssFontBGColor, cssFontColor) && (cssFontBGColor != '' || cssFontColor != '')){
+        if (JudgeSameColor(cssFontBGColor, cssFontColor) && (cssFontBGColor != '' || cssFontColor != '') && !str_ZZ4.test(str.text())){
+            console.log('4_text: ' + str.text());
+            console.log('4_BGcolor: ' + cssFontBGColor);
+            console.log('4_flag_HTML: ' + String(str.html()));
+            console.log('4_BGcolor['+ i_BGColor +']: ' + color[i_BGColor] + 'RGBA['+ i_BGColor +']: ' + color_RGBA[i_BGColor]);
+            /*  调试用 暂时不删 ↑*/
             flag_BodyTextGGL = false;
             flag_FontGGL = false;
         }
@@ -649,7 +661,7 @@
             return 1;
         }
     }
-    
+
     var ServerTypeslist = ["公告", "生存", "创造", "混合（下面注明）", "战争", "RPG", "小游戏（Mini Game）"]
     var ServerTypesValue = [360, 358, 359, 361, 395, 397, 2423]
     function ServerMoveType(str){
