@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.21
+// @version      0.0.22
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -8,7 +8,8 @@
 // @supportURL   https://greasyfork.org/zh-CN/scripts/395841-mcbbsreviewserverhelper/feedback
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-04-02
+// @lastmodified 2020-06-29
+// @note         0.0.22 更新: 1.新增了1.16.x的判断; 2.新增了审核区判断的小改动.
 // @note         0.0.21 更新: 1.更改了妨碍阅读的字体颜色判定; 2.新增了其他版本的亮绿色判定.
 // @note         0.0.20 更新: 1.修复了网络不稳定时一键通过按钮无分类、误分类的问题.
 // @note         0.0.19 更新: 1.更改了亮色字判断逻辑(小改动).
@@ -145,7 +146,7 @@
     }
 
     function UserPointZZ(ele){
-        //正则判断数值是否为正
+        //正则判断数值是否为正(绿宝石&贡献)
         var ZZ = /^[0-9]*\s/;
         return ZZ.test(ele);
     }
@@ -182,7 +183,8 @@
         };
     }
 
-    var VersionList = ['1.15.2', '1.15.1', '1.15',
+    var VersionList = ['1.16.1','1.16',
+                       '1.15.2', '1.15.1', '1.15',
                        '1.14.4', '1.14',
                        '1.13.2', '1.13.1', '1.13',
                        '1.12.2', '1.12.1', '1.12',
@@ -192,8 +194,8 @@
                        '1.8.X',
                        '1.7.10', '1.7.2',
                        '1.6.4'];
-    var VersionList_X = ['1.6.X', '1.7.X', '1.8.X', '1.9.X', '1.10.X', '1.11.X', '1.12.X', '1.13.X', '1.14.X', '1.15.X'];
-    var VersionList_x = ['1.6.x', '1.7.x', '1.8.x', '1.9.x', '1.10.x', '1.11.x', '1.12.x', '1.13.x', '1.14.x', '1.15.x'];
+    var VersionList_X = ['1.6.X', '1.7.X', '1.8.X', '1.9.X', '1.10.X', '1.11.X', '1.12.X', '1.13.X', '1.14.X', '1.15.X','1.16.X'];
+    var VersionList_x = ['1.6.x', '1.7.x', '1.8.x', '1.9.x', '1.10.x', '1.11.x', '1.12.x', '1.13.x', '1.14.x', '1.15.x','1.16.X'];
     function ServerVersionXS(str){
         for(var i = 0; i < VersionList_X.length; i++){
             if((str == VersionList_X[i])||(str == VersionList_x[i])){
@@ -201,6 +203,8 @@
             };
         };
         switch(i){
+            case 10:
+                return VersionList[VersionList.length - 22];
             case 9:
                 return VersionList[VersionList.length - 20];
             case 8:
@@ -232,6 +236,8 @@
             };
         };
         switch(i){
+            case 10:
+                return VersionList[VersionList.length - 21];
             case 9:
                 return VersionList[VersionList.length - 18];
             case 8:
@@ -752,27 +758,52 @@
             }, 250);
         }, 1000)
     }
-
+    function isNowPassOK(str){
+        var ZZ1 = /待编辑/;
+        var ZZ2 = /编辑中/;
+        if(ZZ1.test(str) || ZZ2.test(str)){
+            return false;
+        } else {
+            return true;
+        };
+    }
+    var Flag_TitleTrue = true;
+    var Flag_UserPoint_GX = true;
+    var Flag_UserPoint_LBS = true;
     jq(document).ready(function(){
         if (isNowInServerForum(jq(".bm.cl").html())) {
         //用于判定是否在服务器版，不在的话就不工作
         jq(function () {
-            jq('.s.xst').each(function(){
-            //用于判定页面所有服务器帖的标题
-                TrueOrFalse(ReviewTitleZZ(jq(this).text()), jq(this), '');
+            jq(".common").each(function(){
+                console.log(jq(".common").text());
+                if(isNowPassOK(jq(this).text())){
+                    //用于判定页面所有非编辑状态下的服务器帖的标题
+                    TrueOrFalse(ReviewTitleZZ(jq(this).find(".s.xst").text()), jq(this).find(".s.xst"), '');
+                }else{
+                    TrueOrFalsOrNull(0,jq(this).find(".s.xst"),'','');
+                };
+                console.log(jq(this).find(".s.xst").text());
             });
-
-            TrueOrFalse(ReviewTitleZZ(jq('#thread_subject').text()), jq('#thread_subject'), '');
+            /**
+             *jq('.s.xst').each(function(){
+             *    //用于判定页面所有服务器帖的标题
+             *    TrueOrFalse(ReviewTitleZZ(jq(this).text()), jq(this), '');
+             *});
+             **/
+            Flag_TitleTrue = ReviewTitleZZ(jq('#thread_subject').text());
+            TrueOrFalse(Flag_TitleTrue, jq('#thread_subject'), '');
             //通过正则表达式判断标题是否正确
             //console.log(jq('#thread_subject').text());
             //用于debug输出标题内容↑
 
-            TrueOrFalse(UserPointZZ(jq(".pil.cl dd").eq(2).text()), jq(".pil.cl dd").eq(2), '');
+            Flag_UserPoint_GX = UserPointZZ(jq(".pil.cl dd").eq(2).text());
+            TrueOrFalse(Flag_UserPoint_GX, jq(".pil.cl dd").eq(2), '');
             //eq(2)为贡献
             //console.log(jq(".pil.cl dd").eq(2).text());
             //用于debug输出贡献点↑
 
-            TrueOrFalse(UserPointZZ(jq(".pil.cl dd").eq(5).text()), jq(".pil.cl dd").eq(5), '');
+            Flag_UserPoint_LBS = UserPointZZ(jq(".pil.cl dd").eq(5).text());
+            TrueOrFalse(Flag_UserPoint_LBS, jq(".pil.cl dd").eq(5), '');
             //eq(5)为绿宝石
             //console.log(jq(".pil.cl dd").eq(5).text());
             //用于debug输出绿宝石↑
