@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.22
+// @version      0.0.23
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
