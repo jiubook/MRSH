@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.23
+// @version      0.0.24
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -8,7 +8,8 @@
 // @supportURL   https://greasyfork.org/zh-CN/scripts/395841-mcbbsreviewserverhelper/feedback
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-06-29
+// @lastmodified 2020-07-03
+// @note         0.0.24 更新: 1.新增了一键移动回审核区重新编辑按钮; 2.精简了note显示的数目，今后只显示最近10次更新。
 // @note         0.0.23 更新: 1.修复了1.16.x的判断失误问题.
 // @note         0.0.22 更新: 1.新增了1.16.x的判断; 2.新增了审核区判断的小改动.
 // @note         0.0.21 更新: 1.更改了妨碍阅读的字体颜色判定; 2.新增了其他版本的亮绿色判定.
@@ -18,13 +19,6 @@
 // @note         0.0.17 更新: 1.新增了正常版本至快照版本的模板多版本判断; 2.修改了错别字 “其它” -> “其他”; 3.新增了标题对快照版本的判断.
 // @note         0.0.16 更新: 1.更改了亮色字体判断逻辑.
 // @note         0.0.15 更新: 1.修复了标题单版本但模板选择多版本时不报错的bug.
-// @note         0.0.14 更新: 1.新增了一键通过功能，还在测试稳定性中.
-// @note         0.0.13 更新: 1.更改了部分亮色字体颜色的判定; 2.修复了亮色判定的<div>bug. 0.0.13b 更新: 1.细小的判定更改.
-// @note         0.0.12 更新: 1.精简了代码，合并重复内容.
-// @note         0.0.11 更新: 1.修复了当<font color>中有<u>,<strong>等修饰代码时依旧跳出判定的问题.
-// @note         0.0.10 更新: 1.新增了近似亮色字体色的判定; 2.*可能*修复了叠加多个<font color>而误判颜色的问题.
-// @note         0.0.09 更新: 1.新增了查看一服多贴快捷跳转按钮; 2.修复了下载地址为mcbbs.net时也判定为正确的错误.
-// @note         0.0.08 更新: 1.修复了版本号判定时因为选择其他版本而误判错误; 2.修复了1.8.x等复合单版本误判问题; 3.修复了背景色无法识别的错误.
 // @note         新增、更改、修复、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -50,14 +44,8 @@
     var jq = jQuery.noConflict();
     //jq名称重定义，避免冲突
 
-    //if(!$){
-    //    var s = document.createElement ("script");
-    //    s.src = "http://cdn.bootcss.com/jquery/1.8.3/jquery.min.js";
-    //    s.async = false;
-    //    document.documentElement.appendChild (s);
-    //}
-    //另一种加载jQuery脚本的方法
     function ThreeDifferentTips(ele,str,info1,info2,info3){
+    //顾名思义，添加了三种不同的tips
         if(ele > 0){
             str.html(function(i,origText){
                 return '🍃' + origText + '🍃' + green(info1);
@@ -74,6 +62,7 @@
     }
 
     function TrueOrFalsOrNull(ele,str,info2,info3){
+    //顾名思义，添加了通过、不通过、NULL三种不同的tips
         if(ele > 0){
             str.html(function(i,origText){
                 return '✅' + origText;
@@ -90,6 +79,7 @@
     }
 
     function TrueOrFalse(ele,str,info2){
+    //顾名思义，添加了通过、不通过两种不同的tips
         if(ele){
             str.html(function(i,origText){
                 return '✅' + origText;
@@ -102,6 +92,7 @@
     }
 
     function OnlyFalse(ele,str,info2){
+    //顾名思义，只添加了不通过的tip
         if(!ele){
             str.html(function(i,origText){
                 return '❌' + red(info2) + origText;
@@ -649,6 +640,14 @@
         });
     }
 
+    function BtnMoveToReviewServer(){
+    //一键移回服务器审核版重新编辑
+        var BtnMoveToReviewServerText = '<button class="BtnMoveToReviewServer">'+ orange('移回审核版') +'</button>'
+        jq('#modmenu').html(function(i,origtext){
+            return origtext + '<br>' + BtnMoveToReviewServerText;
+        });
+    }
+
     function isNowInServerForum(str){
         var ZZ1 = /服务器/;
         var ZZ2 = /gid=167/;
@@ -669,6 +668,9 @@
         }
     }
 
+    /********************
+     * ↓一键通过按钮开始↓ *
+     *********************/
     var ServerTypeslist = ["公告", "生存", "创造", "混合（下面注明）", "战争", "RPG", "小游戏（Mini Game）"]
     var ServerTypesValue = [360, 358, 359, 361, 395, 397, 2423]
     function ServerMoveType(str){
@@ -689,7 +691,6 @@
             };
         };
     }
-
     var Plate_flag = false;
     var Type_flag = false;
     var Check_Ping = 1;
@@ -759,7 +760,86 @@
             }, 250);
         }, 1000)
     }
+    /*********************
+     * ↑一键通过按钮结束↑ *
+     ********************/
+    /********************
+     * ↓一键移动按钮开始↓ *
+     *********************/
+    var flag_Plate_ToReviewServer = false;
+    var flag_Type_ToReviewServer = false;
+    var Check_Ping = 1;
+    function checkServerType_ToReviewServer(){
+        //确认版块选项是否正确(本函数为无限循环函数，首次延迟0.25秒，之后每次执行增加延迟0.25秒)
+        if(flag_Plate_ToReviewServer == false){
+            console.log('3');
+            jq("#moveto").trigger("change");
+            setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(3)').prop("selected", true)}, 250 * Check_Ping);
+            //选择服务器审核版
+            setTimeout(function (){
+                if(jq('#moveto').val() == 296){
+                //判断是否选择了服务器审核版
+                flag_Plate_ToReviewServer = true;
+                }else{
+                    Check_Ping++;
+                    setTimeout(function (){checkServerType_ToReviewServer();}, 250 * Check_Ping);
+                }
+            }, 250 * Check_Ping);
+        };
+    }
+    function checkServerMoveValue_ToReviewServer(){
+        //确认分类选项是否正确(本函数为无限循环函数，首次延迟0.25秒，之后每次执行增加延迟0.25秒)
+        if(flag_Type_ToReviewServer == false){
+            console.log('4');
+            jq("#moveto").trigger("change")
+            setTimeout(function (){jq('#threadtypes option:eq(7)').prop("selected", true)}, 250 * Check_Ping);
+            //选择待编辑
+            setTimeout(function (){
+            //判断是否选择了待编辑分类
+                if( jq('select[name="threadtypeid"]').val() == 590 ){
+                    flag_Type_ToReviewServer = true;
+                }else{
+                    Check_Ping++;
+                    setTimeout(function (){checkServerMoveValue_ToReviewServer();}, 250 * Check_Ping);
+                }
+            }, 250 * Check_Ping);
+        };
+    }
+    function checkMoveTrue_ToReviewServer(){
+        //确认选项是否都正确(本函数为无限循环函数，每次执行延迟0.25秒)
+        if (flag_Plate_ToReviewServer == true && flag_Type_ToReviewServer == true){
+            console.log('5');
+            jq("textarea#reason").val('从服务器版移回服务器审核版重新编辑')
+            //填充文本“通过”
+            setTimeout(function (){jq("button#modsubmit").click()}, 250);
+            //延迟0.25秒点击确认
+        };
+        setTimeout(function (){checkMoveTrue_ToReviewServer();}, 250);
+    }
+    function OneKeyMoveToReviewServer(){
+        //一键通过开始
+        modthreads(2, 'move')
+        //执行“移动”，弹出操作窗口
+        setTimeout(function (){
+            //等待1秒后执行
+            checkServerType_ToReviewServer();
+            //选择版块
+            setTimeout(function (){
+                checkServerMoveValue_ToReviewServer();
+                //选择分类
+                setTimeout(function (){
+                    checkMoveTrue_ToReviewServer();
+                    //执行“通过”
+                }, 250);
+            }, 250);
+        }, 1000)
+    }
+    /*********************
+     * ↑一键移动按钮结束↑ *
+     ********************/
+
     function isNowPassOK(str){
+    //判定是否能审核
         var ZZ1 = /待编辑/;
         var ZZ2 = /编辑中/;
         if(ZZ1.test(str) || ZZ2.test(str)){
@@ -851,10 +931,19 @@
             //eq(3)为服务器营利模式
 
             BtnPass();
-            //创建通过按钮
+            //创建一键通过按钮
+
+            BtnMoveToReviewServer();
+            //创建一键移回服务器审核版重新编辑按钮
 
             jq(".BtnPass").click(function() {
+            //监听一键通过按钮
                 OneKeyPass();
+            })
+
+            jq(".BtnMoveToReviewServer").click(function() {
+            //监听一键移回服务器审核版重新编辑按钮
+                OneKeyMoveToReviewServer();
             })
             //modthreads(4)
             //关闭
