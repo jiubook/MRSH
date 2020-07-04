@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.24
+// @version      0.0.25
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -8,7 +8,8 @@
 // @supportURL   https://greasyfork.org/zh-CN/scripts/395841-mcbbsreviewserverhelper/feedback
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-07-03
+// @lastmodified 2020-07-04
+// @note         0.0.25 更新: 1.新增了一键撤销正面评分按钮; 2.修复了在服务器插件版也会加载脚本的问题; 3.修复了点击下一页时不再判定标题的问题.
 // @note         0.0.24 更新: 1.新增了一键移动回审核区重新编辑按钮; 2.精简了note显示的数目，今后只显示最近10次更新。
 // @note         0.0.23 更新: 1.修复了1.16.x的判断失误问题.
 // @note         0.0.22 更新: 1.新增了1.16.x的判断; 2.新增了审核区判断的小改动.
@@ -44,6 +45,16 @@
     var jq = jQuery.noConflict();
     //jq名称重定义，避免冲突
 
+    function isThisTitleJudged(str){
+        //是否有判定标识
+        var ZZ1 = /(🍃|🍁|🍂|✅|❌|🔔)+/;
+        if(ZZ1.test(str)){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
     function ThreeDifferentTips(ele,str,info1,info2,info3){
     //顾名思义，添加了三种不同的tips
         if(ele > 0){
@@ -101,6 +112,7 @@
     }
 
     function green(str){
+    //文本快捷变绿
         if(str != ''){
             return '<font color="green">' + str + '</font>';
         }else{
@@ -109,6 +121,7 @@
     }
 
     function red(str){
+    //文本快捷变红
         if(str != ''){
             return '<font color="red">' + str + '</font>';
         }else{
@@ -117,6 +130,7 @@
     }
 
     function orange(str){
+    //文本快捷变橘
         if(str != ''){
             return '<font color="#A63C00">' + str + '</font>';
         }else{
@@ -644,15 +658,24 @@
     //一键移回服务器审核版重新编辑
         var BtnMoveToReviewServerText = '<button class="BtnMoveToReviewServer">'+ orange('移回审核版') +'</button>'
         jq('#modmenu').html(function(i,origtext){
-            return origtext + '<br>' + BtnMoveToReviewServerText;
+            return origtext + '<hr color="#D2D2D2"><div class="BtnlistsClass" id="BtnlistsId">' + BtnMoveToReviewServerText + '</div>';
+        });
+    }
+
+    function BtnRemoveAllMarks(){
+        //一键撤销评分
+        var BtnRemoveAllMarksText = '<button class="BtnRemoveAllMarks">'+ red('撤销正面评分') +'</button>'
+        jq('.BtnlistsClass').html(function(i,origtext){
+            return origtext + '<span class="pipe">|</span>' + BtnRemoveAllMarksText;
         });
     }
 
     function isNowInServerForum(str){
-        var ZZ1 = /服务器/;
-        var ZZ2 = /gid=167/;
+        var ZZ1 = />服务器</;
+        var ZZ2 = />服务器审核区</;
+        var ZZ10 = /gid=167/;
         //多人联机大区分区的固定URL
-        if(ZZ1.test(str) && ZZ2.test(str)){
+        if((ZZ1.test(str) || ZZ2.test(str)) && ZZ10.test(str)){
             return true;
         } else {
             return false;
@@ -677,7 +700,7 @@
     //输入分类名(str)，返回分类为第几项(int)
         for(var i = 0; i < ServerTypeslist.length; i++){
             if(str == ServerTypeslist[i]){
-                console.log(i);
+                //console.log(i);
                 return i;
             };
         };
@@ -686,7 +709,7 @@
     //输入分类名(str)，返回分类value(int)
         for(var i = 0; i < ServerTypeslist.length; i++){
             if(str == ServerTypeslist[i]){
-                console.log(i);
+                //console.log(i);
                 return ServerTypesValue[i];
             };
         };
@@ -697,7 +720,7 @@
     function checkServerType(){
         //确认版块选项是否正确(本函数为无限循环函数，首次延迟0.25秒，之后每次执行增加延迟0.25秒)
         if(Plate_flag == false){
-            console.log('3');
+            //console.log('3');
             jq("#moveto").trigger("change");
             setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(1)').prop("selected", true)}, 250 * Check_Ping);
             //选择服务器版
@@ -715,7 +738,7 @@
     function checkServerMoveValue(){
         //确认分类选项是否正确(本函数为无限循环函数，首次延迟0.25秒，之后每次执行增加延迟0.25秒)
         if(Type_flag == false){
-            console.log('4');
+            //console.log('4');
             jq("#moveto").trigger("change")
             //setTimeout(function (){jq('#threadtypes option:eq('+ ServerMoveType(jq('.cgtl.mbm tbody tr td').eq(4).text()) + ')').attr("selected", true)}, 500);
             setTimeout(function (){jq('#threadtypes option:eq('+ ServerMoveType(jq('.cgtl.mbm tbody tr td').eq(4).text()) + ')').prop("selected", true)}, 250 * Check_Ping);
@@ -734,7 +757,7 @@
     function checkMoveTrue(){
         //确认选项是否都正确(本函数为无限循环函数，每次执行延迟0.25秒)
         if (Type_flag == true && Plate_flag == true){
-            console.log('5');
+            //console.log('5');
             jq("textarea#reason").val('通过')
             //填充文本“通过”
             setTimeout(function (){jq("button#modsubmit").click()}, 250);
@@ -772,7 +795,7 @@
     function checkServerType_ToReviewServer(){
         //确认版块选项是否正确(本函数为无限循环函数，首次延迟0.25秒，之后每次执行增加延迟0.25秒)
         if(flag_Plate_ToReviewServer == false){
-            console.log('3');
+            //console.log('3');
             jq("#moveto").trigger("change");
             setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(3)').prop("selected", true)}, 250 * Check_Ping);
             //选择服务器审核版
@@ -790,7 +813,7 @@
     function checkServerMoveValue_ToReviewServer(){
         //确认分类选项是否正确(本函数为无限循环函数，首次延迟0.25秒，之后每次执行增加延迟0.25秒)
         if(flag_Type_ToReviewServer == false){
-            console.log('4');
+            //console.log('4');
             jq("#moveto").trigger("change")
             setTimeout(function (){jq('#threadtypes option:eq(7)').prop("selected", true)}, 250 * Check_Ping);
             //选择待编辑
@@ -808,7 +831,7 @@
     function checkMoveTrue_ToReviewServer(){
         //确认选项是否都正确(本函数为无限循环函数，每次执行延迟0.25秒)
         if (flag_Plate_ToReviewServer == true && flag_Type_ToReviewServer == true){
-            console.log('5');
+            //console.log('5');
             jq("textarea#reason").val('从服务器版移回服务器审核版重新编辑')
             //填充文本“通过”
             setTimeout(function (){jq("button#modsubmit").click()}, 250);
@@ -837,6 +860,27 @@
     /*********************
      * ↑一键移动按钮结束↑ *
      ********************/
+    function OnyKeyRemoveMarks(){
+        showWindow('rate', jq("a:contains(撤销评分)").attr('href'), 'get', -1);
+        setTimeout(function (){
+            var MarksLength = Number(jq("table.list").find("tr").length) - 1;
+            jq(".pc").prop("checked", true);
+            //勾选“全选”
+            checkall(document.getElementById("rateform"), 'logid');
+            //更新“全选”的勾选
+            for(var Mark_i = 0 ; Mark_i < MarksLength; Mark_i++){
+            //撤销评分的判定循环
+                if(Number(jq("table.list").find(".xw1").eq(Mark_i).text()) < 0){
+                //如果评分的数值为负
+                    jq("input[name='logidarray[]']").eq(Mark_i).prop("checked", false);
+                    //则取消撤销勾选
+                }
+            }
+            jq(".px.vm").val('版规4-12：删帖时撤回所有正面评分');
+            setTimeout(function (){jq("button.pn.pnc.vm[name='ratesubmit']").click()}, 250);
+            //延迟0.25秒点击确认
+        }, 1000)
+    }
 
     function isNowPassOK(str){
     //判定是否能审核
@@ -848,6 +892,42 @@
             return true;
         };
     }
+    function checkServerTitleInForum(){
+    //判定页面上的标题是否合格
+        jq("th.common").each(function(){
+            //用于判定标题是否合格
+                //console.log(jq(".common").text());
+                if(!isThisTitleJudged(jq(this).find(".s.xst").text())){
+                    if(isNowPassOK(jq(this).text())){
+                        //用于判定页面所有非编辑状态下的服务器帖的标题
+                        TrueOrFalse(ReviewTitleZZ(jq(this).find(".s.xst").text()), jq(this).find(".s.xst"), '');
+                    }else{
+                        TrueOrFalsOrNull(0,jq(this).find(".s.xst"),'','');
+                    };
+                }
+                //console.log(jq(this).find(".s.xst").text());
+        });
+        jq("th.new").each(function(){
+        //用于判定标题是否合格_new
+            if(!isThisTitleJudged(jq(this).find(".s.xst").text())){
+                if(isNowPassOK(jq(this).text())){
+                    TrueOrFalse(ReviewTitleZZ(jq(this).find(".s.xst").text()), jq(this).find(".s.xst"), '');
+                }else{
+                    TrueOrFalsOrNull(0,jq(this).find(".s.xst"),'','');
+                };
+            }
+        });
+    }
+    function ServerTitleRecheckEventListener(){
+        if((jq('#autopbn').text() != '下一页 »') && (jq('#autopbn').css("display") !='none')){
+            //console.log(1);
+            setTimeout(function (){
+                ServerTitleRecheckEventListener();
+            }, 250);
+        }else{
+            checkServerTitleInForum();
+        }
+    }
     var Flag_TitleTrue = true;
     var Flag_UserPoint_GX = true;
     var Flag_UserPoint_LBS = true;
@@ -855,16 +935,7 @@
         if (isNowInServerForum(jq(".bm.cl").html())) {
         //用于判定是否在服务器版，不在的话就不工作
         jq(function () {
-            jq(".common").each(function(){
-                console.log(jq(".common").text());
-                if(isNowPassOK(jq(this).text())){
-                    //用于判定页面所有非编辑状态下的服务器帖的标题
-                    TrueOrFalse(ReviewTitleZZ(jq(this).find(".s.xst").text()), jq(this).find(".s.xst"), '');
-                }else{
-                    TrueOrFalsOrNull(0,jq(this).find(".s.xst"),'','');
-                };
-                console.log(jq(this).find(".s.xst").text());
-            });
+            checkServerTitleInForum();
             /**
              *jq('.s.xst').each(function(){
              *    //用于判定页面所有服务器帖的标题
@@ -936,6 +1007,8 @@
             BtnMoveToReviewServer();
             //创建一键移回服务器审核版重新编辑按钮
 
+            BtnRemoveAllMarks();
+
             jq(".BtnPass").click(function() {
             //监听一键通过按钮
                 OneKeyPass();
@@ -945,6 +1018,16 @@
             //监听一键移回服务器审核版重新编辑按钮
                 OneKeyMoveToReviewServer();
             })
+
+            jq(".BtnRemoveAllMarks").click(function() {
+            //监听一键撤销评分
+                OnyKeyRemoveMarks();
+            })
+
+            document.getElementById('autopbn').addEventListener('click', function(e){
+            //监听下一页按钮触发click时，再次审核一遍
+                ServerTitleRecheckEventListener();
+            }, false);
             //modthreads(4)
             //关闭
 
