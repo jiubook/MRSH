@@ -1,14 +1,17 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.25
+// @version      0.0.26
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
 // @mainpage     https://greasyfork.org/zh-CN/scripts/395841-mcbbsreviewserverhelper/
 // @supportURL   https://greasyfork.org/zh-CN/scripts/395841-mcbbsreviewserverhelper/feedback
+// @home-url     https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
+// @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-07-04
+// @lastmodified 2020-07-07
+// @note         0.0.26 更新: 1.新增了从MCBBS Extender学来的样式; 2.更改了监听下一页按钮的触发逻辑; 3.更改了一些细小的代码
 // @note         0.0.25 更新: 1.新增了一键撤销正面评分按钮; 2.修复了在服务器插件版也会加载脚本的问题; 3.修复了点击下一页时不再判定标题的问题.
 // @note         0.0.24 更新: 1.新增了一键移动回审核区重新编辑按钮; 2.精简了note显示的数目，今后只显示最近10次更新。
 // @note         0.0.23 更新: 1.修复了1.16.x的判断失误问题.
@@ -19,7 +22,6 @@
 // @note         0.0.18 更新: 1.修复了无法自动分类为"小游戏（mini game）"的问题.
 // @note         0.0.17 更新: 1.新增了正常版本至快照版本的模板多版本判断; 2.修改了错别字 “其它” -> “其他”; 3.新增了标题对快照版本的判断.
 // @note         0.0.16 更新: 1.更改了亮色字体判断逻辑.
-// @note         0.0.15 更新: 1.修复了标题单版本但模板选择多版本时不报错的bug.
 // @note         新增、更改、修复、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -896,36 +898,70 @@
     //判定页面上的标题是否合格
         jq("th.common").each(function(){
             //用于判定标题是否合格
-                //console.log(jq(".common").text());
+            //console.log(jq(".common").text());
+            if(jq(this).parent().parent().find('a[title*="本版置顶主题"]').length <= 0 && jq(this).parent().parent().find('a[title*="分类置顶主题"]').length <= 0 && jq(this).parent().parent().find('a[title*="全局置顶主题"]').length <= 0){
                 if(!isThisTitleJudged(jq(this).find(".s.xst").text())){
                     if(isNowPassOK(jq(this).text())){
                         //用于判定页面所有非编辑状态下的服务器帖的标题
+                        TrueOrFalse(ReviewTitleZZ(jq(this).find(".s.xst").text()), jq(this).find(".s.xst"), '')
+                    }else{
+                        TrueOrFalsOrNull(0,jq(this).find(".s.xst"),'','');
+                    };
+                };
+            };
+            //console.log(jq(this).find(".s.xst").text());
+        });
+        jq("th.new").each(function(){
+        //用于判定标题是否合格_new
+            if(jq(this).parent().parent().find('a[title*="本版置顶主题"]').length <= 0 && jq(this).parent().parent().find('a[title*="分类置顶主题"]').length <= 0 && jq(this).parent().parent().find('a[title*="全局置顶主题"]').length <= 0){
+                if(!isThisTitleJudged(jq(this).find(".s.xst").text())){
+                    if(isNowPassOK(jq(this).text())){
                         TrueOrFalse(ReviewTitleZZ(jq(this).find(".s.xst").text()), jq(this).find(".s.xst"), '');
                     }else{
                         TrueOrFalsOrNull(0,jq(this).find(".s.xst"),'','');
                     };
-                }
-                //console.log(jq(this).find(".s.xst").text());
-        });
-        jq("th.new").each(function(){
-        //用于判定标题是否合格_new
-            if(!isThisTitleJudged(jq(this).find(".s.xst").text())){
-                if(isNowPassOK(jq(this).text())){
-                    TrueOrFalse(ReviewTitleZZ(jq(this).find(".s.xst").text()), jq(this).find(".s.xst"), '');
-                }else{
-                    TrueOrFalsOrNull(0,jq(this).find(".s.xst"),'','');
                 };
-            }
+            };
         });
+        ServerHighLightThreads();
     }
-    function ServerTitleRecheckEventListener(){
+    function ServerHighLightThreads(){
+        //感谢MCBBS Extender提供的思路
+        jq("head").append(`<style id="ServerHighLightThreads">
+                            .tl .icn.pass{
+                                background-image: linear-gradient(90deg, rgba(022, 198, 012, 0.3), transparent);
+                                border-left: 3px solid rgb(022, 198, 012);
+                            }
+                            .tl .icn.out{
+                                background-image: linear-gradient(90deg, rgba(240, 058, 023, 0.3), transparent);
+                                border-left: 3px solid rgb(240, 058, 023);
+                            }
+                            .tl .icn.wait{
+                                background-image: linear-gradient(90deg, rgba(255, 200, 061, 0.3), transparent);
+                                border-left: 3px solid rgb(255, 200, 061);
+                            }
+                            .tl .icn.closed{
+                                background-image: linear-gradient(90deg, rgba(255, 129, 255, 0.3), transparent);
+                                border-left: 3px solid rgb(255, 129, 255);
+                            }
+                            </style>`);
+        jq('a[title*="关闭的主题"]').parent().addClass("closed");
+        jq('th.common').find(".s.xst:contains('✅')").parent().parent().children(".icn").addClass("pass");
+        jq('th.common').find(".s.xst:contains('❌')").parent().parent().children(".icn").addClass("out");
+        jq('th.common').find(".s.xst:contains('🔔')").parent().parent().children(".icn").addClass("wait");
+        jq('th.new').find(".s.xst:contains('✅')").parent().parent().children(".icn").addClass("pass");
+        jq('th.new').find(".s.xst:contains('❌')").parent().parent().children(".icn").addClass("out");
+        jq('th.new').find(".s.xst:contains('🔔')").parent().parent().children(".icn").addClass("wait");
+    }
+    function NextPageEventListener(_func){
+        //用于监听下一页按钮，并重新审核标题
         if((jq('#autopbn').text() != '下一页 »') && (jq('#autopbn').css("display") !='none')){
             //console.log(1);
             setTimeout(function (){
-                ServerTitleRecheckEventListener();
+                NextPageEventListener(_func);
             }, 250);
         }else{
-            checkServerTitleInForum();
+            _func();
         }
     }
     var Flag_TitleTrue = true;
@@ -936,35 +972,23 @@
         //用于判定是否在服务器版，不在的话就不工作
         jq(function () {
             checkServerTitleInForum();
-            /**
-             *jq('.s.xst').each(function(){
-             *    //用于判定页面所有服务器帖的标题
-             *    TrueOrFalse(ReviewTitleZZ(jq(this).text()), jq(this), '');
-             *});
-             **/
+             //用于判定页面所有服务器帖的标题
+
             Flag_TitleTrue = ReviewTitleZZ(jq('#thread_subject').text());
             TrueOrFalse(Flag_TitleTrue, jq('#thread_subject'), '');
             //通过正则表达式判断标题是否正确
-            //console.log(jq('#thread_subject').text());
-            //用于debug输出标题内容↑
 
             Flag_UserPoint_GX = UserPointZZ(jq(".pil.cl dd").eq(2).text());
             TrueOrFalse(Flag_UserPoint_GX, jq(".pil.cl dd").eq(2), '');
             //eq(2)为贡献
-            //console.log(jq(".pil.cl dd").eq(2).text());
-            //用于debug输出贡献点↑
 
             Flag_UserPoint_LBS = UserPointZZ(jq(".pil.cl dd").eq(5).text());
             TrueOrFalse(Flag_UserPoint_LBS, jq(".pil.cl dd").eq(5), '');
             //eq(5)为绿宝石
-            //console.log(jq(".pil.cl dd").eq(5).text());
-            //用于debug输出绿宝石↑
 
             TrueOrFalse(ServerTitleName(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(0).text()) > 0 , jq(".cgtl.mbm tbody tr td").eq(0), '模板服务器名称与标题不符');
             //eq(0)为服务器名称
             //提取标题中的服务器名称后，和模板内服务器名称做对比
-            //console.log(jq(".cgtl.mbm tbody tr td").eq(0).text());
-            //用于debug输出服务器名称↑
 
             TrueOrFalse(getServerVersion(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(2).text()) > 0, jq(".cgtl.mbm tbody tr td").eq(2), '模板版本号与标题不符');
             //eq2为版本号
@@ -983,6 +1007,7 @@
 
             BodyFontFlag();
             //输出是否违规的tips
+
             CheckMultipleThread();
             //输出检查一服多贴的tips
 
@@ -1026,7 +1051,7 @@
 
             document.getElementById('autopbn').addEventListener('click', function(e){
             //监听下一页按钮触发click时，再次审核一遍
-                ServerTitleRecheckEventListener();
+                NextPageEventListener(checkServerTitleInForum);
             }, false);
             //modthreads(4)
             //关闭
