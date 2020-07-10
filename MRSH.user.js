@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.26
+// @version      0.0.27
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,7 +10,8 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-07-07
+// @lastmodified 2020-07-11
+// @note         0.0.27 更新: 1.更改了公益服标语判定逻辑; 2.更改了监听版块的设定; 3.更改了评论投诉区的样式设定。
 // @note         0.0.26 更新: 1.新增了从MCBBS Extender学来的样式; 2.更改了监听下一页按钮的触发逻辑; 3.更改了一些细小的代码
 // @note         0.0.25 更新: 1.新增了一键撤销正面评分按钮; 2.修复了在服务器插件版也会加载脚本的问题; 3.修复了点击下一页时不再判定标题的问题.
 // @note         0.0.24 更新: 1.新增了一键移动回审核区重新编辑按钮; 2.精简了note显示的数目，今后只显示最近10次更新。
@@ -21,7 +22,6 @@
 // @note         0.0.19 更新: 1.更改了亮色字判断逻辑(小改动).
 // @note         0.0.18 更新: 1.修复了无法自动分类为"小游戏（mini game）"的问题.
 // @note         0.0.17 更新: 1.新增了正常版本至快照版本的模板多版本判断; 2.修改了错别字 “其它” -> “其他”; 3.新增了标题对快照版本的判断.
-// @note         0.0.16 更新: 1.更改了亮色字体判断逻辑.
 // @note         新增、更改、修复、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -468,26 +468,30 @@
         };
     }
 
-    function SeverBusinessConditions(str){
-        var strR = str.indexOf("服");
+    function SeverBusinessConditions(str1,str2){
+        var strR = str1.indexOf("服");
         //从左寻找 “服” 的位置
-        var subStr = String(str.substring(0,strR));
+        var subStr = String(str1.substring(0,strR));
         //从头开始，通过 “服” 定位服务器是否公益
-        if(subStr == "公益"){
-            return 0;
-        } else if (subStr == "商业"){
-            //忽视内容，返回99
-            return 99;
-        } else{
-            return -1;
-        };
-    }
-
-    function isSeverCommonwealSlogansTrue(str){
         var ZZ1 = /本服是公益服并且愿意承担虚假宣传的一切后果/;
-        if(ZZ1.test(str)){
-            return 0;
-        } else {
+        if(subStr == "公益"){
+            if(ZZ1.test(str2)){
+                //如果是公益服，且写明了标语，则返回中立
+                return 0;
+            } else {
+                //如果是公益服，没写明标语，则返回false
+                return -1;
+            };
+        } else if (subStr == "商业"){
+            if(ZZ1.test(str2)){
+                //如果是商业服，却写了标语，则返回false
+                return -1;
+            } else {
+                //如果是商业服，没写明标语，则返回true(unlimited)
+                return 99;
+            };
+        } else{
+            //其他情况，返回false，提醒审核
             return -1;
         };
     }
@@ -675,9 +679,12 @@
     function isNowInServerForum(str){
         var ZZ1 = />服务器</;
         var ZZ2 = />服务器审核区</;
+        var ZZ3 = /服务器\/玩家评论<\/a>\s<em>›<\/em>/
+        var ZZ4 = />人才市场<\/a>\s<em>›<\/em>/
+        var ZZ5 = /服务器版块版规|公告/
         var ZZ10 = /gid=167/;
         //多人联机大区分区的固定URL
-        if((ZZ1.test(str) || ZZ2.test(str)) && ZZ10.test(str)){
+        if((ZZ1.test(str) || ZZ2.test(str)) && !ZZ3.test(str) && !ZZ4.test(str) && !ZZ5.test(str) && ZZ10.test(str)){
             return true;
         } else {
             return false;
@@ -718,23 +725,23 @@
     }
     var Plate_flag = false;
     var Type_flag = false;
-    var Check_Ping = 1;
+    var Checked_Ping = 1;
     function checkServerType(){
         //确认版块选项是否正确(本函数为无限循环函数，首次延迟0.25秒，之后每次执行增加延迟0.25秒)
         if(Plate_flag == false){
             //console.log('3');
             jq("#moveto").trigger("change");
-            setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(1)').prop("selected", true)}, 250 * Check_Ping);
+            setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(1)').prop("selected", true)}, 250 * Checked_Ping);
             //选择服务器版
             setTimeout(function (){
                 if(jq('#moveto').val() == 179){
                 //判断是否选择了服务器版
                     Plate_flag = true;
                 }else{
-                    Check_Ping++;
-                    setTimeout(function (){checkServerType();}, 250 * Check_Ping);
+                    Checked_Ping++;
+                    setTimeout(function (){checkServerType();}, 250 * Checked_Ping);
                 }
-            }, 250 * Check_Ping);
+            }, 250 * Checked_Ping);
         };
     }
     function checkServerMoveValue(){
@@ -743,17 +750,17 @@
             //console.log('4');
             jq("#moveto").trigger("change")
             //setTimeout(function (){jq('#threadtypes option:eq('+ ServerMoveType(jq('.cgtl.mbm tbody tr td').eq(4).text()) + ')').attr("selected", true)}, 500);
-            setTimeout(function (){jq('#threadtypes option:eq('+ ServerMoveType(jq('.cgtl.mbm tbody tr td').eq(4).text()) + ')').prop("selected", true)}, 250 * Check_Ping);
+            setTimeout(function (){jq('#threadtypes option:eq('+ ServerMoveType(jq('.cgtl.mbm tbody tr td').eq(4).text()) + ')').prop("selected", true)}, 250 * Checked_Ping);
             //选择生存
             setTimeout(function (){
             //判断是否选择了对应分类
                 if( jq('select[name="threadtypeid"]').val() == ServerMoveValue(jq('.cgtl.mbm tbody tr td').eq(4).text()) ){
                     Type_flag = true;
                 }else{
-                    Check_Ping++;
-                    setTimeout(function (){checkServerMoveValue();}, 250 * Check_Ping);
+                    Checked_Ping++;
+                    setTimeout(function (){checkServerMoveValue();}, 250 * Checked_Ping);
                 }
-            }, 250 * Check_Ping);
+            }, 250 * Checked_Ping);
         };
     }
     function checkMoveTrue(){
@@ -793,23 +800,22 @@
      *********************/
     var flag_Plate_ToReviewServer = false;
     var flag_Type_ToReviewServer = false;
-    var Check_Ping = 1;
     function checkServerType_ToReviewServer(){
         //确认版块选项是否正确(本函数为无限循环函数，首次延迟0.25秒，之后每次执行增加延迟0.25秒)
         if(flag_Plate_ToReviewServer == false){
             //console.log('3');
             jq("#moveto").trigger("change");
-            setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(3)').prop("selected", true)}, 250 * Check_Ping);
+            setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(3)').prop("selected", true)}, 250 * Checked_Ping);
             //选择服务器审核版
             setTimeout(function (){
                 if(jq('#moveto').val() == 296){
                 //判断是否选择了服务器审核版
                 flag_Plate_ToReviewServer = true;
                 }else{
-                    Check_Ping++;
-                    setTimeout(function (){checkServerType_ToReviewServer();}, 250 * Check_Ping);
+                    Checked_Ping++;
+                    setTimeout(function (){checkServerType_ToReviewServer();}, 250 * Checked_Ping);
                 }
-            }, 250 * Check_Ping);
+            }, 250 * Checked_Ping);
         };
     }
     function checkServerMoveValue_ToReviewServer(){
@@ -817,17 +823,17 @@
         if(flag_Type_ToReviewServer == false){
             //console.log('4');
             jq("#moveto").trigger("change")
-            setTimeout(function (){jq('#threadtypes option:eq(7)').prop("selected", true)}, 250 * Check_Ping);
+            setTimeout(function (){jq('#threadtypes option:eq(7)').prop("selected", true)}, 250 * Checked_Ping);
             //选择待编辑
             setTimeout(function (){
             //判断是否选择了待编辑分类
                 if( jq('select[name="threadtypeid"]').val() == 590 ){
                     flag_Type_ToReviewServer = true;
                 }else{
-                    Check_Ping++;
-                    setTimeout(function (){checkServerMoveValue_ToReviewServer();}, 250 * Check_Ping);
+                    Checked_Ping++;
+                    setTimeout(function (){checkServerMoveValue_ToReviewServer();}, 250 * Checked_Ping);
                 }
-            }, 250 * Check_Ping);
+            }, 250 * Checked_Ping);
         };
     }
     function checkMoveTrue_ToReviewServer(){
@@ -886,9 +892,8 @@
 
     function isNowPassOK(str){
     //判定是否能审核
-        var ZZ1 = /待编辑/;
-        var ZZ2 = /编辑中/;
-        if(ZZ1.test(str) || ZZ2.test(str)){
+        var ZZ1 = /待编辑|编辑中|讨论/;
+        if(ZZ1.test(str)){
             return false;
         } else {
             return true;
@@ -1023,8 +1028,8 @@
             ThreeDifferentTips(ServerType(jq(".cgtl.mbm tbody tr td").eq(9).text()), jq(".cgtl.mbm tbody tr td").eq(9), '该服为“纯净”类型，注意Mod/插件', '', '只允许领域服选择“其他”类型');
             //eq(9)为服务器类型
 
-            TrueOrFalsOrNull(SeverBusinessConditions(jq(".cgtl.mbm tbody tr td").eq(3).text()) + isSeverCommonwealSlogansTrue(jq('.t_f').text()), jq(".cgtl.mbm tbody tr td").eq(3), "公益服标语不合格", "需要注意其公益服标语");
-            //eq(3)为服务器营利模式
+            TrueOrFalsOrNull(SeverBusinessConditions(jq(".cgtl.mbm tbody tr td").eq(3).text(), jq('.t_f').text()), jq(".cgtl.mbm tbody tr td").eq(3), "公益服标语不合格", "需要注意其公益服标语");
+            //eq(3)为服务器营利模式, jq('.t_f').text()为服务器内容
 
             BtnPass();
             //创建一键通过按钮
