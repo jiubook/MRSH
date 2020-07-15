@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.27
+// @version      0.0.28
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,7 +10,8 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-07-11
+// @lastmodified 2020-07-15
+// @note         0.0.28 更新: 1.新增了公益服图章判断,一键通过按钮需要按3下; 2.新增了公益服标语判断flag; 3.更改了部分变量名
 // @note         0.0.27 更新: 1.更改了公益服标语判定逻辑; 2.更改了监听版块的设定; 3.更改了评论投诉区的样式设定。
 // @note         0.0.26 更新: 1.新增了从MCBBS Extender学来的样式; 2.更改了监听下一页按钮的触发逻辑; 3.更改了一些细小的代码
 // @note         0.0.25 更新: 1.新增了一键撤销正面评分按钮; 2.修复了在服务器插件版也会加载脚本的问题; 3.修复了点击下一页时不再判定标题的问题.
@@ -21,7 +22,6 @@
 // @note         0.0.20 更新: 1.修复了网络不稳定时一键通过按钮无分类、误分类的问题.
 // @note         0.0.19 更新: 1.更改了亮色字判断逻辑(小改动).
 // @note         0.0.18 更新: 1.修复了无法自动分类为"小游戏（mini game）"的问题.
-// @note         0.0.17 更新: 1.新增了正常版本至快照版本的模板多版本判断; 2.修改了错别字 “其它” -> “其他”; 3.新增了标题对快照版本的判断.
 // @note         新增、更改、修复、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -468,6 +468,10 @@
         };
     }
 
+    var flag_SeverBusinessConditionsWrite = false;
+    //是否正确填写，正确填写为true，填写错误为false
+    var flag_SeverBusinessConditionsValue = false;
+    //是否为公益服，公益服为true，商业服为false
     function SeverBusinessConditions(str1,str2){
         var strR = str1.indexOf("服");
         //从左寻找 “服” 的位置
@@ -477,21 +481,31 @@
         if(subStr == "公益"){
             if(ZZ1.test(str2)){
                 //如果是公益服，且写明了标语，则返回中立
+                flag_SeverBusinessConditionsValue = true;
+                flag_SeverBusinessConditionsWrite = true;
                 return 0;
             } else {
                 //如果是公益服，没写明标语，则返回false
+                flag_SeverBusinessConditionsValue = true;
+                flag_SeverBusinessConditionsWrite = false;
                 return -1;
             };
         } else if (subStr == "商业"){
             if(ZZ1.test(str2)){
                 //如果是商业服，却写了标语，则返回false
+                flag_SeverBusinessConditionsValue = false;
+                flag_SeverBusinessConditionsWrite = false;
                 return -1;
             } else {
                 //如果是商业服，没写明标语，则返回true(unlimited)
+                flag_SeverBusinessConditionsValue = false;
+                flag_SeverBusinessConditionsWrite = true;
                 return 99;
             };
         } else{
             //其他情况，返回false，提醒审核
+            flag_SeverBusinessConditionsValue = false;
+            flag_SeverBusinessConditionsWrite = false;
             return -1;
         };
     }
@@ -700,6 +714,16 @@
         }
     }
 
+    function NoReloadToDoFunction(_NoReloadToDo_InputFunction){
+        var Current_Href = location.href;
+        var newFrame = '<frameset cols=\'*\'>\n<frame src=\'' + Current_Href + '\' /></frameset>';
+        // 引用document对象，调用write方法写入框架，打开新窗口
+        document.write(newFrame);
+        //此处输入代执行的代码
+        document._NoReloadToDo_InputFunction();
+        document.void(close());
+        // 关闭上面的窗口
+    }
     /********************
      * ↓一键通过按钮开始↓ *
      *********************/
@@ -723,12 +747,12 @@
             };
         };
     }
-    var Plate_flag = false;
-    var Type_flag = false;
+    var flag_Plate_ServerPass = false;
+    var flag_Type_ServerPass = false;
     var Checked_Ping = 1;
-    function checkServerType(){
+    function checkServerType_ServerPass(){
         //确认版块选项是否正确(本函数为无限循环函数，首次延迟0.25秒，之后每次执行增加延迟0.25秒)
-        if(Plate_flag == false){
+        if(flag_Plate_ServerPass == false){
             //console.log('3');
             jq("#moveto").trigger("change");
             setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(1)').prop("selected", true)}, 250 * Checked_Ping);
@@ -736,17 +760,17 @@
             setTimeout(function (){
                 if(jq('#moveto').val() == 179){
                 //判断是否选择了服务器版
-                    Plate_flag = true;
+                    flag_Plate_ServerPass = true;
                 }else{
                     Checked_Ping++;
-                    setTimeout(function (){checkServerType();}, 250 * Checked_Ping);
+                    setTimeout(function (){checkServerType_ServerPass();}, 250 * Checked_Ping);
                 }
             }, 250 * Checked_Ping);
         };
     }
-    function checkServerMoveValue(){
+    function checkServerMoveValue_ServerPass(){
         //确认分类选项是否正确(本函数为无限循环函数，首次延迟0.25秒，之后每次执行增加延迟0.25秒)
-        if(Type_flag == false){
+        if(flag_Type_ServerPass == false){
             //console.log('4');
             jq("#moveto").trigger("change")
             //setTimeout(function (){jq('#threadtypes option:eq('+ ServerMoveType(jq('.cgtl.mbm tbody tr td').eq(4).text()) + ')').attr("selected", true)}, 500);
@@ -755,48 +779,145 @@
             setTimeout(function (){
             //判断是否选择了对应分类
                 if( jq('select[name="threadtypeid"]').val() == ServerMoveValue(jq('.cgtl.mbm tbody tr td').eq(4).text()) ){
-                    Type_flag = true;
+                    flag_Type_ServerPass = true;
                 }else{
                     Checked_Ping++;
-                    setTimeout(function (){checkServerMoveValue();}, 250 * Checked_Ping);
+                    setTimeout(function (){checkServerMoveValue_ServerPass();}, 250 * Checked_Ping);
                 }
             }, 250 * Checked_Ping);
         };
     }
-    function checkMoveTrue(){
-        //确认选项是否都正确(本函数为无限循环函数，每次执行延迟0.25秒)
-        if (Type_flag == true && Plate_flag == true){
+    function checkMoveTrue_ServerPass(){
+        //确认移动选项是否都正确(本函数为无限循环函数，每次执行延迟0.25秒)
+        if (flag_Type_ServerPass == true && flag_Plate_ServerPass == true){
             //console.log('5');
             jq("textarea#reason").val('通过')
             //填充文本“通过”
             setTimeout(function (){jq("button#modsubmit").click()}, 250);
             //延迟0.25秒点击确认
         };
-        setTimeout(function (){checkMoveTrue();}, 250);
+        setTimeout(function (){checkMoveTrue_ServerPass();}, 250);
     }
-    function OneKeyPass(){
-        //一键通过开始
+    function OneKeyPass_ToDo(){
+    //一键通过，执行清单
         modthreads(2, 'move')
         //执行“移动”，弹出操作窗口
         setTimeout(function (){
             //等待1秒后执行
-            checkServerType();
+            checkServerType_ServerPass();
             //选择版块
             setTimeout(function (){
-                checkServerMoveValue();
+                checkServerMoveValue_ServerPass();
                 //选择分类
                 setTimeout(function (){
-                    checkMoveTrue();
+                    checkMoveTrue_ServerPass();
                     //执行“通过”
                 }, 250);
             }, 250);
         }, 1000)
     }
+    function SeverBusinessConditionsCheck(){
+    //公益服判定
+        if(flag_SeverBusinessConditionsWrite == true && flag_SeverBusinessConditionsValue == true){
+            if((flag_Stamp_ServerBusiness == true && flag_Stamplist_ServerBusiness == true) || jq('div#threadstamp').find('img').attr("title") == "公益"){
+                return true;
+            }else{
+                ServerBusiness_Stamplist_Check()
+                //图标判定
+            }
+        }else{
+            return false;
+        }
+    }
+    var flag_Stamplist_ServerBusiness = false;
+    function ServerBusiness_Stamplist_Check(){
+    //公益服图标判定
+        modaction('stamplist');
+        setTimeout(function (){
+            jq("#stamplist.ps").trigger("change")
+            setTimeout(function (){
+                if(jq('#stamplist.ps').val() == 18){
+                    //如果有图标，就关闭
+                    flag_Stamplist_ServerBusiness = true;
+                    hideWindow('mods')
+                    ServerBusiness_Stamp_Check();
+                    //执行图章
+                }else{
+                    //如果没有图标，就给予图标
+                    jq('#stamplist.ps option:eq(10)').prop("selected", true)
+                    //eq(10)为公益图标
+                    updatestamplistimg()
+                    setTimeout(function (){
+                        if(jq('#stamplist.ps').val() == 18){
+                        //最后判断是否选择了公益服图标
+                            flag_Stamplist_ServerBusiness = true;
+                            jq("textarea#reason.pt").val('公益服图标')
+                            setTimeout(function (){
+                                jq("button#modsubmit.pn.pnc").click();
+                                //按下按钮
+                                location.reload();
+                                //刷新
+                            }, 250);
+                        }else{
+                            Checked_Ping++;
+                            setTimeout(function (){ServerBusiness_Stamplist_Check();}, 250 * Checked_Ping);
+                        }
+                    }, 250 * Checked_Ping);
+                }
+            }, 250 * Checked_Ping);
+        }, 1000);
+    }
+    var flag_Stamp_ServerBusiness = false;
+    function ServerBusiness_Stamp_Check(){
+    //公益服图章判定
+        modaction('stamp');
+        setTimeout(function (){
+            jq("#stampl.ps").trigger("change")
+            setTimeout(function (){
+                if(jq('#stamp.ps').val() == 22){
+                    //如果有图章，就关闭
+                    flag_Stamp_ServerBusiness = true;
+                    hideWindow('mods')
+                }else{
+                    //如果没有图标，就给予图章
+                    jq('#stamp.ps option:eq(10)').prop("selected", true)
+                    //eq(10)为公益图章
+                    updatestampimg()
+                    setTimeout(function (){
+                        if(jq('#stamp.ps').val() == 22){
+                        //最后判断是否选择了公益服图章
+                            flag_Stamp_ServerBusiness = true;
+                            jq("textarea#reason.pt").val('公益服图章')
+                            setTimeout(function (){
+                                jq("button#modsubmit.pn.pnc").click();
+                                //按下按钮
+                                location.reload();
+                                //刷新
+                            }, 250);
+                        }else{
+                            Checked_Ping++;
+                            setTimeout(function (){ServerBusiness_Stamplist_Check();}, 250 * Checked_Ping);
+                        }
+                    }, 250 * Checked_Ping);
+                }
+            }, 250 * Checked_Ping);
+        }, 1000);
+    }
+    function OneKeyPass(){
+        //一键通过开始
+        if(flag_SeverBusinessConditionsWrite == true && flag_SeverBusinessConditionsValue == false){
+            //商业服
+            OneKeyPass_ToDo();
+        }else if (SeverBusinessConditionsCheck()){
+            //公益服
+            OneKeyPass_ToDo();
+        }
+    }
     /*********************
      * ↑一键通过按钮结束↑ *
      ********************/
     /********************
-     * ↓一键移动按钮开始↓ *
+     * ↓移回审核按钮开始↓ *
      *********************/
     var flag_Plate_ToReviewServer = false;
     var flag_Type_ToReviewServer = false;
@@ -810,7 +931,7 @@
             setTimeout(function (){
                 if(jq('#moveto').val() == 296){
                 //判断是否选择了服务器审核版
-                flag_Plate_ToReviewServer = true;
+                    flag_Plate_ToReviewServer = true;
                 }else{
                     Checked_Ping++;
                     setTimeout(function (){checkServerType_ToReviewServer();}, 250 * Checked_Ping);
