@@ -713,17 +713,6 @@
             return 1;
         }
     }
-
-    function NoReloadToDoFunction(_NoReloadToDo_InputFunction){
-        var Current_Href = location.href;
-        var newFrame = '<frameset cols=\'*\'>\n<frame src=\'' + Current_Href + '\' /></frameset>';
-        // 引用document对象，调用write方法写入框架，打开新窗口
-        document.write(newFrame);
-        //此处输入代执行的代码
-        document._NoReloadToDo_InputFunction();
-        document.void(close());
-        // 关闭上面的窗口
-    }
     /********************
      * ↓一键通过按钮开始↓ *
      *********************/
