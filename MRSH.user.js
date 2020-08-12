@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.29
+// @version      0.0.30
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,7 +10,8 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-07-15
+// @lastmodified 2020-08-12
+// @note         0.0.30 更新: 1.新增了还原旧版积分的设定；
 // @note         0.0.29 更新: 1.新增了1.16.2
 // @note         0.0.28 更新: 1.新增了公益服图章判断,一键通过按钮需要按3下; 2.新增了公益服标语判断flag; 3.更改了部分变量名
 // @note         0.0.27 更新: 1.更改了公益服标语判定逻辑; 2.更改了监听版块的设定; 3.更改了评论投诉区的样式设定。
@@ -21,7 +22,6 @@
 // @note         0.0.22 更新: 1.新增了1.16.x的判断; 2.新增了审核区判断的小改动.
 // @note         0.0.21 更新: 1.更改了妨碍阅读的字体颜色判定; 2.新增了其他版本的亮绿色判定.
 // @note         0.0.20 更新: 1.修复了网络不稳定时一键通过按钮无分类、误分类的问题.
-// @note         0.0.19 更新: 1.更改了亮色字判断逻辑(小改动).
 // @note         新增、更改、修复、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -1079,10 +1079,45 @@
             _func();
         }
     }
+    function Old_point(){
+        var i = 0;
+        jq(".pil.cl").each(function(){
+            var str1 = jq(".pil.cl").eq(i).text();
+            var str2 = jq(".i.y").children(".cl").eq(i).text();
+            var jf = str2.match(/积分\d+/);
+            var rq = str2.match(/人气\d+/);
+            var gx = str2.match(/贡献\d+/);
+            var ax = str2.match(/爱心\d+/);
+            var jl = str1.match(/金粒\d+/);
+            var bs = str1.match(/宝石\d+/);
+            var zs = str2.match(/钻石\d+/);
+
+            var jf_int = jf[0].match(/\d+/);
+            var rq_int = rq[0].match(/\d+/);
+            var gx_int = gx[0].match(/\d+/);
+            var ax_int = ax[0].match(/\d+/);
+            var jl_int = jl[0].match(/\d+/);
+            var bs_int = bs[0].match(/\d+/);
+            var zs_int = zs[0].match(/\d+/);
+
+            var str3 = "<dt>积分</dt><dd>" + jf_int.toString() + "</dd>" +
+                "<dt>人气</dt><dd>" + rq_int.toString() + " 点</dd>" +
+                "<dt>贡献</dt><dd>" + gx_int.toString() + " 份</dd>" +
+                "<dt>爱心</dt><dd>" + ax_int.toString() + " 心</dd>" +
+                "<dt>金粒</dt><dd>" + jl_int.toString() + " 粒</dd>" +
+                "<dt>绿宝石</dt><dd>" + bs_int.toString() + " 颗</dd>" +
+                "<dt>钻石</dt><dd>" + zs_int.toString() + " 颗</dd>"
+            jq(".pil.cl").eq(i).html(str3);
+            i++;
+        });
+    }
     var Flag_TitleTrue = true;
     var Flag_UserPoint_GX = true;
     var Flag_UserPoint_LBS = true;
     jq(document).ready(function(){
+        Old_point();
+        //还原旧版积分
+
         if (isNowInServerForum(jq(".bm.cl").html())) {
         //用于判定是否在服务器版，不在的话就不工作
         jq(function () {
