@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.28
+// @version      0.0.29
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -11,6 +11,7 @@
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
 // @lastmodified 2020-07-15
+// @note         0.0.29 更新: 1.新增了1.16.2
 // @note         0.0.28 更新: 1.新增了公益服图章判断,一键通过按钮需要按3下; 2.新增了公益服标语判断flag; 3.更改了部分变量名
 // @note         0.0.27 更新: 1.更改了公益服标语判定逻辑; 2.更改了监听版块的设定; 3.更改了评论投诉区的样式设定。
 // @note         0.0.26 更新: 1.新增了从MCBBS Extender学来的样式; 2.更改了监听下一页按钮的触发逻辑; 3.更改了一些细小的代码
@@ -21,7 +22,6 @@
 // @note         0.0.21 更新: 1.更改了妨碍阅读的字体颜色判定; 2.新增了其他版本的亮绿色判定.
 // @note         0.0.20 更新: 1.修复了网络不稳定时一键通过按钮无分类、误分类的问题.
 // @note         0.0.19 更新: 1.更改了亮色字判断逻辑(小改动).
-// @note         0.0.18 更新: 1.修复了无法自动分类为"小游戏（mini game）"的问题.
 // @note         新增、更改、修复、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -191,7 +191,7 @@
         };
     }
 
-    var VersionList = ['1.16.1','1.16',
+    var VersionList = ['1.16.2','1.16.1','1.16',
                        '1.15.2', '1.15.1', '1.15',
                        '1.14.4', '1.14',
                        '1.13.2', '1.13.1', '1.13',
@@ -212,7 +212,7 @@
         };
         switch(i){
             case 10:
-                return VersionList[VersionList.length - 22];
+                return VersionList[VersionList.length - 23];
             case 9:
                 return VersionList[VersionList.length - 20];
             case 8:
