@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.30
+// @version      0.0.31
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -11,6 +11,7 @@
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
 // @lastmodified 2020-08-12
+// @note         0.0.31 更新: 1.紧急修复了还原积分判定的小bug;
 // @note         0.0.30 更新: 1.新增了还原旧版积分的设定；
 // @note         0.0.29 更新: 1.新增了1.16.2
 // @note         0.0.28 更新: 1.新增了公益服图章判断,一键通过按钮需要按3下; 2.新增了公益服标语判断flag; 3.更改了部分变量名
@@ -1080,25 +1081,26 @@
         }
     }
     function Old_point(){
+        //积分还原
         var i = 0;
         jq(".pil.cl").each(function(){
             var str1 = jq(".pil.cl").eq(i).text();
             var str2 = jq(".i.y").children(".cl").eq(i).text();
-            var jf = str2.match(/积分\d+/);
-            var rq = str2.match(/人气\d+/);
-            var gx = str2.match(/贡献\d+/);
-            var ax = str2.match(/爱心\d+/);
-            var jl = str1.match(/金粒\d+/);
-            var bs = str1.match(/宝石\d+/);
-            var zs = str2.match(/钻石\d+/);
+            var jf = str2.match(/积分-?\d+/);
+            var rq = str2.match(/人气-?\d+/);
+            var gx = str2.match(/贡献-?\d+/);
+            var ax = str2.match(/爱心-?\d+/);
+            var jl = str1.match(/金粒-?\d+/);
+            var bs = str1.match(/宝石-?\d+/);
+            var zs = str2.match(/钻石-?\d+/);
 
-            var jf_int = jf[0].match(/\d+/);
-            var rq_int = rq[0].match(/\d+/);
-            var gx_int = gx[0].match(/\d+/);
-            var ax_int = ax[0].match(/\d+/);
-            var jl_int = jl[0].match(/\d+/);
-            var bs_int = bs[0].match(/\d+/);
-            var zs_int = zs[0].match(/\d+/);
+            var jf_int = jf[0].match(/-?\d+/);
+            var rq_int = rq[0].match(/-?\d+/);
+            var gx_int = gx[0].match(/-?\d+/);
+            var ax_int = ax[0].match(/-?\d+/);
+            var jl_int = jl[0].match(/-?\d+/);
+            var bs_int = bs[0].match(/-?\d+/);
+            var zs_int = zs[0].match(/-?\d+/);
 
             var str3 = "<dt>积分</dt><dd>" + jf_int.toString() + "</dd>" +
                 "<dt>人气</dt><dd>" + rq_int.toString() + " 点</dd>" +
@@ -1111,12 +1113,19 @@
             i++;
         });
     }
+    function Old_medal(){
+        //勋章长度还原
+        jq(".md_ctrl").css("max-height","5000px");
+    }
     var Flag_TitleTrue = true;
     var Flag_UserPoint_GX = true;
     var Flag_UserPoint_LBS = true;
     jq(document).ready(function(){
         Old_point();
         //还原旧版积分
+
+        Old_medal();
+        //勋章长度还原
 
         if (isNowInServerForum(jq(".bm.cl").html())) {
         //用于判定是否在服务器版，不在的话就不工作
