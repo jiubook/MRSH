@@ -656,7 +656,6 @@
             return '<div align="center" class="FontSizeTipsDiv"><font size="4" class="FontSizeTips">' + TipText + '</font></div>' + origText;
         });
     }
-
     function CheckMultipleThread(){
     //一服多贴tips
         var UserHomeHref = jq('.avtm').attr("href");
@@ -1117,117 +1116,155 @@
         //勋章长度还原
         jq(".md_ctrl").css("max-height","5000px");
     }
+    function CheckThreadIsFlashed(){
+        //判定页面是否刷新
+        jq('.t_f').html(function(i,origText){
+            return origText + '<div class="CheckThreadIsFlashed"></div>';
+        });
+    }
+    /************************
+     * 从这开始，为主函数
+    **/
     var Flag_TitleTrue = true;
     var Flag_UserPoint_GX = true;
     var Flag_UserPoint_LBS = true;
-    jq(document).ready(function(){
-        Old_point();
-        //还原旧版积分
+    function js_main_thread_body(){
+    //贴子内，内容检测
+        Flag_UserPoint_GX = UserPointZZ(jq(".pil.cl dd").eq(2).text());
+        TrueOrFalse(Flag_UserPoint_GX, jq(".pil.cl dd").eq(2), '');
+        //eq(2)为贡献
 
-        Old_medal();
-        //勋章长度还原
+        Flag_UserPoint_LBS = UserPointZZ(jq(".pil.cl dd").eq(5).text());
+        TrueOrFalse(Flag_UserPoint_LBS, jq(".pil.cl dd").eq(5), '');
+        //eq(5)为绿宝石
 
-        if (isNowInServerForum(jq(".bm.cl").html())) {
-        //用于判定是否在服务器版，不在的话就不工作
-        jq(function () {
-            checkServerTitleInForum();
-             //用于判定页面所有服务器帖的标题
+        TrueOrFalse(ServerTitleName(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(0).text()) > 0 , jq(".cgtl.mbm tbody tr td").eq(0), '模板服务器名称与标题不符');
+        //eq(0)为服务器名称
+        //提取标题中的服务器名称后，和模板内服务器名称做对比
 
-            Flag_TitleTrue = ReviewTitleZZ(jq('#thread_subject').text());
-            TrueOrFalse(Flag_TitleTrue, jq('#thread_subject'), '');
-            //通过正则表达式判断标题是否正确
+        TrueOrFalse(getServerVersion(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(2).text()) > 0, jq(".cgtl.mbm tbody tr td").eq(2), '模板版本号与标题不符');
+        //eq2为版本号
+        //提取标题中的版本号后，和模板内版本号做对比
 
-            Flag_UserPoint_GX = UserPointZZ(jq(".pil.cl dd").eq(2).text());
-            TrueOrFalse(Flag_UserPoint_GX, jq(".pil.cl dd").eq(2), '');
-            //eq(2)为贡献
+        jq('.t_f').find('font').each(function(){
+            OnlyFalse(BodyFont_Size_Color(jq(this)), jq(this), '');
+        });
+        //console.log(flag_BodyTextSize);
+        //用于debug输出是否有大于5号的字↑
 
-            Flag_UserPoint_LBS = UserPointZZ(jq(".pil.cl dd").eq(5).text());
-            TrueOrFalse(Flag_UserPoint_LBS, jq(".pil.cl dd").eq(5), '');
-            //eq(5)为绿宝石
+        jq('.spoilerbody').each(function(){
+            jq(this).css('display','block');
+        })
+        //展开所有的折叠页
 
-            TrueOrFalse(ServerTitleName(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(0).text()) > 0 , jq(".cgtl.mbm tbody tr td").eq(0), '模板服务器名称与标题不符');
-            //eq(0)为服务器名称
-            //提取标题中的服务器名称后，和模板内服务器名称做对比
+        BodyFontFlag();
+        //输出是否违规的tips
 
-            TrueOrFalse(getServerVersion(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(2).text()) > 0, jq(".cgtl.mbm tbody tr td").eq(2), '模板版本号与标题不符');
-            //eq2为版本号
-            //提取标题中的版本号后，和模板内版本号做对比
+        CheckMultipleThread();
+        //输出检查一服多贴的tips
 
-            jq('.t_f').find('font').each(function(){
-                OnlyFalse(BodyFont_Size_Color(jq(this)), jq(this), '');
-            });
-            //console.log(flag_BodyTextSize);
-            //用于debug输出是否有大于5号的字↑
+        //console.log(jq(".cgtl.mbm tbody tr td").eq(14).text());
+        //用于debug输出IP地址↑
+        TrueOrFalse(ServerIPAddress(jq(".cgtl.mbm tbody tr td").eq(14).text()) >= 1 , jq(".cgtl.mbm tbody tr td").eq(14), '未在模板标注有效的IP地址/获取方式');
+        //eq(14)为IP地址
+        //使用正则来匹配IP地址
 
-            jq('.spoilerbody').each(function(){
-                jq(this).css('display','block');
-            })
-            //展开所有的折叠页
+        TrueOrFalsOrNull(ServerClientDownload(jq(".cgtl.mbm tbody tr td").eq(11).text()) + ServerClientDownloadSet(jq(".cgtl.mbm tbody tr td").eq(9).text()), jq(".cgtl.mbm tbody tr td").eq(11), '未在模板标注有效的客户端下载地址', '记得测试一下是否有效');
+        //eq(9)为服务器类型，eq(11)为客户端下载地址
 
-            BodyFontFlag();
-            //输出是否违规的tips
+        ThreeDifferentTips(ServerType(jq(".cgtl.mbm tbody tr td").eq(9).text()), jq(".cgtl.mbm tbody tr td").eq(9), '该服为“纯净”类型，注意Mod/插件', '', '只允许领域服选择“其他”类型');
+        //eq(9)为服务器类型
 
-            CheckMultipleThread();
-            //输出检查一服多贴的tips
+        TrueOrFalsOrNull(SeverBusinessConditions(jq(".cgtl.mbm tbody tr td").eq(3).text(), jq('.t_f').text()), jq(".cgtl.mbm tbody tr td").eq(3), "公益服标语不合格", "需要注意其公益服标语");
+        //eq(3)为服务器营利模式, jq('.t_f').text()为服务器内容
 
-            //console.log(jq(".cgtl.mbm tbody tr td").eq(14).text());
-            //用于debug输出IP地址↑
-            TrueOrFalse(ServerIPAddress(jq(".cgtl.mbm tbody tr td").eq(14).text()) >= 1 , jq(".cgtl.mbm tbody tr td").eq(14), '未在模板标注有效的IP地址/获取方式');
-            //eq(14)为IP地址
-            //使用正则来匹配IP地址
+        BtnPass();
+        //创建一键通过按钮
 
-            TrueOrFalsOrNull(ServerClientDownload(jq(".cgtl.mbm tbody tr td").eq(11).text()) + ServerClientDownloadSet(jq(".cgtl.mbm tbody tr td").eq(9).text()), jq(".cgtl.mbm tbody tr td").eq(11), '未在模板标注有效的客户端下载地址', '记得测试一下是否有效');
-            //eq(9)为服务器类型，eq(11)为客户端下载地址
+        /**
+         * ↓↓最后执行↓↓
+         */
+        jq(".cgtl.mbm tbody tr td").each( function(){
+            //用于判定模板是否有空
+            OnlyFalse(isNull(jq(this).text()), jq(this), '该项为空');
+        });
 
-            ThreeDifferentTips(ServerType(jq(".cgtl.mbm tbody tr td").eq(9).text()), jq(".cgtl.mbm tbody tr td").eq(9), '该服为“纯净”类型，注意Mod/插件', '', '只允许领域服选择“其他”类型');
-            //eq(9)为服务器类型
+        start_xx_j();
+        //↑百度网盘有效性判断
 
-            TrueOrFalsOrNull(SeverBusinessConditions(jq(".cgtl.mbm tbody tr td").eq(3).text(), jq('.t_f').text()), jq(".cgtl.mbm tbody tr td").eq(3), "公益服标语不合格", "需要注意其公益服标语");
-            //eq(3)为服务器营利模式, jq('.t_f').text()为服务器内容
+    };
+    function js_main_thread_head(){
+    //帖子内，标题部分
+        Flag_TitleTrue = ReviewTitleZZ(jq('#thread_subject').text());
+        TrueOrFalse(Flag_TitleTrue, jq('#thread_subject'), '');
+        //通过正则表达式判断标题是否正确
 
-            BtnPass();
-            //创建一键通过按钮
+        BtnMoveToReviewServer();
+        //创建一键移回服务器审核版重新编辑按钮
 
-            BtnMoveToReviewServer();
-            //创建一键移回服务器审核版重新编辑按钮
+        BtnRemoveAllMarks();
+        //创建一键撤销按钮
+    };
+    function js_main_thread_addEventListener(){
+    //贴子内，监听项目
+        jq(".BtnPass").click(function() {
+        //监听一键通过按钮
+            OneKeyPass();
+        })
 
-            BtnRemoveAllMarks();
+        jq(".BtnMoveToReviewServer").click(function() {
+        //监听一键移回服务器审核版重新编辑按钮
+            OneKeyMoveToReviewServer();
+        })
 
-            jq(".BtnPass").click(function() {
-            //监听一键通过按钮
-                OneKeyPass();
-            })
+        jq(".BtnRemoveAllMarks").click(function() {
+        //监听一键撤销评分
+            OnyKeyRemoveMarks();
+        })
+    };
 
-            jq(".BtnMoveToReviewServer").click(function() {
-            //监听一键移回服务器审核版重新编辑按钮
-                OneKeyMoveToReviewServer();
-            })
-
-            jq(".BtnRemoveAllMarks").click(function() {
-            //监听一键撤销评分
-                OnyKeyRemoveMarks();
-            })
-
+    function js_main_forum(){
+    //在版块时运行的函数
+        checkServerTitleInForum();
+        //用于判定页面所有服务器帖的标题
+        try{
             document.getElementById('autopbn').addEventListener('click', function(e){
             //监听下一页按钮触发click时，再次审核一遍
                 NextPageEventListener(checkServerTitleInForum);
             }, false);
-            //modthreads(4)
-            //关闭
+        }catch(err){
+            "none";
+        };
+    };
 
-            /**
-             * ↓↓最后执行↓↓
-             */
-            jq(".cgtl.mbm tbody tr td").each( function(){
-                //用于判定模板是否有空
-                    OnlyFalse(isNull(jq(this).text()), jq(this), '该项为空');
-                });
-
-            start_xx_j();
-            //↑百度网盘有效性判断
-
-        })
+    jq(document).ready(function(){
+        Old_point();
+        //还原旧版积分
+        Old_medal();
+        //勋章长度还原
+        if (isNowInServerForum(jq(".bm.cl").html())) {
+        //用于判定是否在服务器版，不在的话就不工作
+            CheckThreadIsFlashed();
+            //用于检测页面是否被刷新
+            js_main_forum();
+            //在版块时运行的函数
+            js_main_thread_head();
+            js_main_thread_body();
+            js_main_thread_addEventListener();
+            //在贴内的函数
+            jq(".pl.bm").children("div").on('DOMNodeInserted',function(){
+                //当内容被改变时，重新加载body部分函数
+                if(jq(".CheckThreadIsFlashed").val() == undefined){
+                    CheckThreadIsFlashed();
+                    //用于检测页面是否被刷新
+                    Old_point();
+                    //还原旧版积分
+                    Old_medal();
+                    //勋章长度还原
+                    js_main_thread_body();
+                    //在贴内的函数
+                }
+            })
         };
     });
-
 })();
