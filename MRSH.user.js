@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.31
+// @version      0.0.32
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,7 +10,8 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-08-12
+// @lastmodified 2020-08-14
+// @note         0.0.32 更新: 1.新增了使用目录功能时也会触发检测的功能; 2.新增了主函数的分类;
 // @note         0.0.31 更新: 1.紧急修复了还原积分判定的小bug;
 // @note         0.0.30 更新: 1.新增了还原旧版积分的设定；
 // @note         0.0.29 更新: 1.新增了1.16.2
@@ -20,9 +21,6 @@
 // @note         0.0.25 更新: 1.新增了一键撤销正面评分按钮; 2.修复了在服务器插件版也会加载脚本的问题; 3.修复了点击下一页时不再判定标题的问题.
 // @note         0.0.24 更新: 1.新增了一键移动回审核区重新编辑按钮; 2.精简了note显示的数目，今后只显示最近10次更新。
 // @note         0.0.23 更新: 1.修复了1.16.x的判断失误问题.
-// @note         0.0.22 更新: 1.新增了1.16.x的判断; 2.新增了审核区判断的小改动.
-// @note         0.0.21 更新: 1.更改了妨碍阅读的字体颜色判定; 2.新增了其他版本的亮绿色判定.
-// @note         0.0.20 更新: 1.修复了网络不稳定时一键通过按钮无分类、误分类的问题.
 // @note         新增、更改、修复、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
