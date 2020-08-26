@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.32
+// @version      0.0.33
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,7 +10,8 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-08-14
+// @lastmodified 2020-08-26
+// @note         0.0.33 更新: 1.修复了点击目录时积分还原不工作的问题。
 // @note         0.0.32 更新: 1.新增了使用目录功能时也会触发检测的功能; 2.新增了主函数的分类;
 // @note         0.0.31 更新: 1.紧急修复了还原积分判定的小bug;
 // @note         0.0.30 更新: 1.新增了还原旧版积分的设定；
@@ -1116,7 +1117,7 @@
     }
     function CheckThreadIsFlashed(){
         //判定页面是否刷新
-        jq('.t_f').html(function(i,origText){
+        jq('.t_f').eq(0).html(function(i,origText){
             return origText + '<div class="CheckThreadIsFlashed"></div>';
         });
     }
@@ -1236,14 +1237,14 @@
     };
 
     jq(document).ready(function(){
-        Old_point();
-        //还原旧版积分
-        Old_medal();
-        //勋章长度还原
         if (isNowInServerForum(jq(".bm.cl").html())) {
-        //用于判定是否在服务器版，不在的话就不工作
+        //判定在服务器版，执行以下操作；
             CheckThreadIsFlashed();
             //用于检测页面是否被刷新
+            Old_point();
+            //还原旧版积分
+            Old_medal();
+            //勋章长度还原
             js_main_forum();
             //在版块时运行的函数
             js_main_thread_head();
@@ -1261,6 +1262,24 @@
                     //勋章长度还原
                     js_main_thread_body();
                     //在贴内的函数
+                }
+            })
+        }else{
+        //判定不在服务器版，执行以下操作；
+            CheckThreadIsFlashed();
+            Old_point();
+            //还原旧版积分
+            Old_medal();
+            //勋章长度还原
+            jq(".pl.bm").children("div").on('DOMNodeInserted',function(){
+                //当内容被改变时，重新加载body部分函数
+                if(jq(".CheckThreadIsFlashed").val() == undefined){
+                    CheckThreadIsFlashed();
+                    //用于检测页面是否被刷新
+                    Old_point();
+                    //还原旧版积分
+                    Old_medal();
+                    //勋章长度还原
                 }
             })
         };
