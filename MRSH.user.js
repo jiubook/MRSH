@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.34
+// @version      0.0.35
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,17 +10,17 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-09-03
-// @note         0.0.34 更新: 1.新增了标题黑块、emoji判定
-// @note         0.0.33 更新: 1.修复了点击目录时积分还原不工作的问题。
-// @note         0.0.32 更新: 1.新增了使用目录功能时也会触发检测的功能; 2.新增了主函数的分类;
-// @note         0.0.31 更新: 1.紧急修复了还原积分判定的小bug;
-// @note         0.0.30 更新: 1.新增了还原旧版积分的设定；
-// @note         0.0.29 更新: 1.新增了1.16.2
-// @note         0.0.28 更新: 1.新增了公益服图章判断,一键通过按钮需要按3下; 2.新增了公益服标语判断flag; 3.更改了部分变量名
-// @note         0.0.27 更新: 1.更改了公益服标语判定逻辑; 2.更改了监听版块的设定; 3.更改了评论投诉区的样式设定。
-// @note         0.0.26 更新: 1.新增了从MCBBS Extender学来的样式; 2.更改了监听下一页按钮的触发逻辑; 3.更改了一些细小的代码
-// @note         0.0.25 更新: 1.新增了一键撤销正面评分按钮; 2.修复了在服务器插件版也会加载脚本的问题; 3.修复了点击下一页时不再判定标题的问题.
+// @lastmodified 2020-09-13
+// @note         0.0.35 更新: 1.新增了标题黑块判定; 2.新增了1.16.3; 3.新增了单版本 - 其他版本的判断; 
+// @note         0.0.34 更新: 1.新增了标题黑块、emoji判定; 
+// @note         0.0.33 更新: 1.修复了点击目录时积分还原不工作的问题; 
+// @note         0.0.32 更新: 1.新增了使用目录功能时也会触发检测的功能; 2.新增了主函数的分类; 
+// @note         0.0.31 更新: 1.紧急修复了还原积分判定的小bug; 
+// @note         0.0.30 更新: 1.新增了还原旧版积分的设定; 
+// @note         0.0.29 更新: 1.新增了1.16.2; 
+// @note         0.0.28 更新: 1.新增了公益服图章判断,一键通过按钮需要按3下; 2.新增了公益服标语判断flag; 3.更改了部分变量名; 
+// @note         0.0.27 更新: 1.更改了公益服标语判定逻辑; 2.更改了监听版块的设定; 3.更改了评论投诉区的样式设定; 
+// @note         0.0.26 更新: 1.新增了从MCBBS Extender学来的样式; 2.更改了监听下一页按钮的触发逻辑; 3.更改了一些细小的代码; 
 // @note         新增、更改、修复、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -149,10 +149,10 @@
          * 日语：\u3040-\u30ff\u31f0-\u31ff ぀-ヿㇰ-ㇿ
          * 中文：\u4e00-\u9fa5 一-龥
          * 破折号：\u2014 —
-         * 黑块：\u2588\u2589 █▉
+         * 黑块：\u2588\u2589\u3013 █▉〓
          * emoji：\uD83C\uDF00-\uDFFF\uD83D\uDC00-\uDE4F\uD83D\uDE80-\uDEFF\u2700-\u27BF\uFE0F 🌀-�🐀-�🚀-�✀-➿️
         **/
-        var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([0-9a-zA-Z\u2160-\u217f\u3040-\u30ff\u31f0-\u31ff\u4e00-\u9fa5]|\s)+——([^\u2014\u2588\u2589\uD83C\uDF00-\uDFFF\uD83D\uDC00-\uDE4F\uD83D\uDE80-\uDEFF\u2700-\u27BF\uFE0F]|(\s))+\[(\-?((1\.\d{1,2}(\.(\d{1,2}|X|x))?)|(\d{2}w\d{2}[a-z]))){1,2}\]$/;
+        var ZZ = /^\[(电信|联通|移动|双线|多线|教育|港澳|台湾|欧洲|美洲|亚太|内网)\]([0-9a-zA-Z\u2160-\u217f\u3040-\u30ff\u31f0-\u31ff\u4e00-\u9fa5]|\s)+——([^\u2014\u2588\u2589\u3013\uD83C\uDF00-\uDFFF\uD83D\uDC00-\uDE4F\uD83D\uDE80-\uDEFF\u2700-\u27BF\uFE0F]|(\s))+\[(\-?((1\.\d{1,2}(\.(\d{1,2}|X|x))?)|(\d{2}w\d{2}[a-z]))){1,2}\]$/;
         if (ZZ.test(str)){
             return true;
         }else{
@@ -199,7 +199,7 @@
         };
     }
 
-    var VersionList = ['1.16.2','1.16.1','1.16',
+    var VersionList = ['1.16.3','1.16.2','1.16.1','1.16',
                        '1.15.2', '1.15.1', '1.15',
                        '1.14.4', '1.14',
                        '1.13.2', '1.13.1', '1.13',
@@ -220,7 +220,7 @@
         };
         switch(i){
             case 10:
-                return VersionList[VersionList.length - 23];
+                return VersionList[VersionList.length - 24];
             case 9:
                 return VersionList[VersionList.length - 20];
             case 8:
@@ -370,8 +370,8 @@
             //模板选择多版本，标题选择单版本的情况 return -1
                 return -1;
             }
-            if (TitleVersion2 == ServerVersion[0]){
-            //判定标题中的版本号是否和模板相符合
+            if ((TitleVersion2 == ServerVersion[0]) || ((TitleVersion2 != ServerVersion[0]) && (ServerVersion[ServerVersion.length - 1] == '其他版本'))){
+            //判定标题中的版本号是否和模板相符合 || 不符合的时候 是否选择了其他版本
                 return 2;
             }else{
             //标题中的版本号和模板不符 就直接return -3
