@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.35
+// @version      0.0.36
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,7 +10,8 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-09-13
+// @lastmodified 2020-10-25
+// @note         0.0.36 更新: 1.修复了新人贴设置公益时会陷入无限循环的bug;
 // @note         0.0.35 更新: 1.新增了标题黑块判定; 2.新增了1.16.3; 3.新增了单版本 - 其他版本的判断; 
 // @note         0.0.34 更新: 1.新增了标题黑块、emoji判定; 
 // @note         0.0.33 更新: 1.修复了点击目录时积分还原不工作的问题; 
@@ -20,7 +21,6 @@
 // @note         0.0.29 更新: 1.新增了1.16.2; 
 // @note         0.0.28 更新: 1.新增了公益服图章判断,一键通过按钮需要按3下; 2.新增了公益服标语判断flag; 3.更改了部分变量名; 
 // @note         0.0.27 更新: 1.更改了公益服标语判定逻辑; 2.更改了监听版块的设定; 3.更改了评论投诉区的样式设定; 
-// @note         0.0.26 更新: 1.新增了从MCBBS Extender学来的样式; 2.更改了监听下一页按钮的触发逻辑; 3.更改了一些细小的代码; 
 // @note         新增、更改、修复、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -838,6 +838,27 @@
                     hideWindow('mods')
                     ServerBusiness_Stamp_Check();
                     //执行图章
+                }else if(jq('#stamplist.ps').val() >= 0 && jq('#stamplist.ps').val() != ""){
+                    //如果有其他图标(例如新人帖)，就给予公益图标
+                    jq('#stamplist.ps option:eq(11)').prop("selected", true)
+                    //eq(11)为公益图标
+                    updatestamplistimg()
+                    setTimeout(function (){
+                        if(jq('#stamplist.ps').val() == 18){
+                        //最后判断是否选择了公益服图标
+                            flag_Stamplist_ServerBusiness = true;
+                            jq("textarea#reason.pt").val('公益服图标')
+                            setTimeout(function (){
+                                jq("button#modsubmit.pn.pnc").click();
+                                //按下按钮
+                                location.reload();
+                                //刷新
+                            }, 250);
+                        }else{
+                            Checked_Ping++;
+                            setTimeout(function (){ServerBusiness_Stamplist_Check();}, 250 * Checked_Ping);
+                        }
+                    }, 250 * Checked_Ping);
                 }else{
                     //如果没有图标，就给予图标
                     jq('#stamplist.ps option:eq(10)').prop("selected", true)
