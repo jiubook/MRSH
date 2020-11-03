@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.36
+// @version      0.0.37
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,7 +10,8 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-10-25
+// @lastmodified 2020-11-03
+// @note         0.0.37 更新: 1.新增了1.16.4;
 // @note         0.0.36 更新: 1.修复了新人贴设置公益时会陷入无限循环的bug;
 // @note         0.0.35 更新: 1.新增了标题黑块判定; 2.新增了1.16.3; 3.新增了单版本 - 其他版本的判断; 
 // @note         0.0.34 更新: 1.新增了标题黑块、emoji判定; 
@@ -20,7 +21,6 @@
 // @note         0.0.30 更新: 1.新增了还原旧版积分的设定; 
 // @note         0.0.29 更新: 1.新增了1.16.2; 
 // @note         0.0.28 更新: 1.新增了公益服图章判断,一键通过按钮需要按3下; 2.新增了公益服标语判断flag; 3.更改了部分变量名; 
-// @note         0.0.27 更新: 1.更改了公益服标语判定逻辑; 2.更改了监听版块的设定; 3.更改了评论投诉区的样式设定; 
 // @note         新增、更改、修复、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -199,7 +199,7 @@
         };
     }
 
-    var VersionList = ['1.16.3','1.16.2','1.16.1','1.16',
+    var VersionList = ['1.16.4','1.16.3','1.16.2','1.16.1','1.16',
                        '1.15.2', '1.15.1', '1.15',
                        '1.14.4', '1.14',
                        '1.13.2', '1.13.1', '1.13',
@@ -220,7 +220,7 @@
         };
         switch(i){
             case 10:
-                return VersionList[VersionList.length - 24];
+                return VersionList[VersionList.length - 25];
             case 9:
                 return VersionList[VersionList.length - 20];
             case 8:
