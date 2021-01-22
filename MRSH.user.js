@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.37
+// @version      0.0.38
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,7 +10,8 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2020-11-03
+// @lastmodified 2021-01-22
+// @note         0.0.38 更新: 1.新增了1.16.5; 2.修复了一键移动至审核区按钮失效的问题;
 // @note         0.0.37 更新: 1.新增了1.16.4;
 // @note         0.0.36 更新: 1.修复了新人贴设置公益时会陷入无限循环的bug;
 // @note         0.0.35 更新: 1.新增了标题黑块判定; 2.新增了1.16.3; 3.新增了单版本 - 其他版本的判断; 
@@ -20,7 +21,6 @@
 // @note         0.0.31 更新: 1.紧急修复了还原积分判定的小bug; 
 // @note         0.0.30 更新: 1.新增了还原旧版积分的设定; 
 // @note         0.0.29 更新: 1.新增了1.16.2; 
-// @note         0.0.28 更新: 1.新增了公益服图章判断,一键通过按钮需要按3下; 2.新增了公益服标语判断flag; 3.更改了部分变量名; 
 // @note         新增、更改、修复、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -199,7 +199,7 @@
         };
     }
 
-    var VersionList = ['1.16.4','1.16.3','1.16.2','1.16.1','1.16',
+    var VersionList = ['1.16.5','1.16.4','1.16.3','1.16.2','1.16.1','1.16',
                        '1.15.2', '1.15.1', '1.15',
                        '1.14.4', '1.14',
                        '1.13.2', '1.13.1', '1.13',
@@ -213,6 +213,7 @@
     var VersionList_X = ['1.6.X', '1.7.X', '1.8.X', '1.9.X', '1.10.X', '1.11.X', '1.12.X', '1.13.X', '1.14.X', '1.15.X','1.16.X'];
     var VersionList_x = ['1.6.x', '1.7.x', '1.8.x', '1.9.x', '1.10.x', '1.11.x', '1.12.x', '1.13.x', '1.14.x', '1.15.x','1.16.x'];
     function ServerVersionXS(str){
+        //从VersionList调取.x的最大值
         for(var i = 0; i < VersionList_X.length; i++){
             if((str == VersionList_X[i])||(str == VersionList_x[i])){
                 break;
@@ -220,32 +221,44 @@
         };
         switch(i){
             case 10:
-                return VersionList[VersionList.length - 25];
+                //1.16.5
+                return VersionList[VersionList.length - 26];
             case 9:
+                //1.15.2
                 return VersionList[VersionList.length - 20];
             case 8:
+                //1.14.4
                 return VersionList[VersionList.length - 17];
             case 7:
+                //1.13.2
                 return VersionList[VersionList.length - 15];
             case 6:
+                //1.12.2
                 return VersionList[VersionList.length - 12];
             case 5:
+                //1.11.2
                 return VersionList[VersionList.length - 9];
             case 4:
+                //1.10.x
                 return VersionList[VersionList.length - 7];
             case 3:
+                //1.9.4
                 return VersionList[VersionList.length - 6];
             case 2:
+                //1.8.x
                 return VersionList[VersionList.length - 4];
             case 1:
+                //1.7.10
                 return VersionList[VersionList.length - 3];
             case 0:
+                //1.6.4
                 return VersionList[VersionList.length - 1];
             default:
                 return str;
         };
     }
     function ServerVersionXE(str){
+        //从VersionList调取.x的最小值
         for(var i = 0; i < VersionList_X.length; i++){
             if((str == VersionList_X[i])||(str == VersionList_x[i])){
                 break;
@@ -253,26 +266,37 @@
         };
         switch(i){
             case 10:
+                //1.16
                 return VersionList[VersionList.length - 21];
             case 9:
+                //1.15
                 return VersionList[VersionList.length - 18];
             case 8:
+                //1.14
                 return VersionList[VersionList.length - 16];
             case 7:
+                //1.13
                 return VersionList[VersionList.length - 13];
             case 6:
+                //1.12
                 return VersionList[VersionList.length - 10];
             case 5:
+                //1.11
                 return VersionList[VersionList.length - 8];
             case 4:
+                //1.10.x
                 return VersionList[VersionList.length - 7];
             case 3:
+                //1.9
                 return VersionList[VersionList.length - 5];
             case 2:
+                //1.8.x
                 return VersionList[VersionList.length - 4];
             case 1:
+                //1.7.2
                 return VersionList[VersionList.length - 2];
             case 0:
+                //1.6.4
                 return VersionList[VersionList.length - 1];
             default:
                 return str;
@@ -943,7 +967,7 @@
         if(flag_Plate_ToReviewServer == false){
             //console.log('3');
             jq("#moveto").trigger("change");
-            setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(3)').prop("selected", true)}, 250 * Checked_Ping);
+            setTimeout(function (){jq('#moveto optgroup:eq(5) option:eq(4)').prop("selected", true)}, 250 * Checked_Ping);
             //选择服务器审核版
             setTimeout(function (){
                 if(jq('#moveto').val() == 296){
