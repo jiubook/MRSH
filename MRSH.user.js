@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.38
+// @version      0.0.39
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,7 +10,8 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2021-01-22
+// @lastmodified 2021-01-24
+// @note         0.0.39 更新: 1.移除了模板判定中的1.12.1;
 // @note         0.0.38 更新: 1.新增了1.16.5; 2.修复了一键移动至审核区按钮失效的问题;
 // @note         0.0.37 更新: 1.新增了1.16.4;
 // @note         0.0.36 更新: 1.修复了新人贴设置公益时会陷入无限循环的bug;
@@ -20,8 +21,7 @@
 // @note         0.0.32 更新: 1.新增了使用目录功能时也会触发检测的功能; 2.新增了主函数的分类; 
 // @note         0.0.31 更新: 1.紧急修复了还原积分判定的小bug; 
 // @note         0.0.30 更新: 1.新增了还原旧版积分的设定; 
-// @note         0.0.29 更新: 1.新增了1.16.2; 
-// @note         新增、更改、修复、精简、*可能*
+// @note         新增、更改、修复、移除、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
 // @match        *://www.mcbbs.net/forum.php?mod=viewthread*
@@ -203,7 +203,7 @@
                        '1.15.2', '1.15.1', '1.15',
                        '1.14.4', '1.14',
                        '1.13.2', '1.13.1', '1.13',
-                       '1.12.2', '1.12.1', '1.12',
+                       '1.12.2', '1.12',
                        '1.11.2', '1.11',
                        '1.10.X',
                        '1.9.4', '1.9',
@@ -222,19 +222,19 @@
         switch(i){
             case 10:
                 //1.16.5
-                return VersionList[VersionList.length - 26];
+                return VersionList[VersionList.length - 25];
             case 9:
                 //1.15.2
-                return VersionList[VersionList.length - 20];
+                return VersionList[VersionList.length - 19];
             case 8:
                 //1.14.4
-                return VersionList[VersionList.length - 17];
+                return VersionList[VersionList.length - 16];
             case 7:
                 //1.13.2
-                return VersionList[VersionList.length - 15];
+                return VersionList[VersionList.length - 14];
             case 6:
                 //1.12.2
-                return VersionList[VersionList.length - 12];
+                return VersionList[VersionList.length - 11];
             case 5:
                 //1.11.2
                 return VersionList[VersionList.length - 9];
@@ -267,16 +267,16 @@
         switch(i){
             case 10:
                 //1.16
-                return VersionList[VersionList.length - 21];
+                return VersionList[VersionList.length - 20];
             case 9:
                 //1.15
-                return VersionList[VersionList.length - 18];
+                return VersionList[VersionList.length - 17];
             case 8:
                 //1.14
-                return VersionList[VersionList.length - 16];
+                return VersionList[VersionList.length - 15];
             case 7:
                 //1.13
-                return VersionList[VersionList.length - 13];
+                return VersionList[VersionList.length - 12];
             case 6:
                 //1.12
                 return VersionList[VersionList.length - 10];
