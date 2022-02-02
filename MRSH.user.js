@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.39
+// @version      0.0.40
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,17 +10,17 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2021-01-24
+// @lastmodified 2022-02-02
+// @note         0.0.40 更新: 1.移除了百度网盘判定;2.新增了1.17、1.17.1、1.18、1.18.1;
 // @note         0.0.39 更新: 1.移除了模板判定中的1.12.1;
 // @note         0.0.38 更新: 1.新增了1.16.5; 2.修复了一键移动至审核区按钮失效的问题;
 // @note         0.0.37 更新: 1.新增了1.16.4;
 // @note         0.0.36 更新: 1.修复了新人贴设置公益时会陷入无限循环的bug;
-// @note         0.0.35 更新: 1.新增了标题黑块判定; 2.新增了1.16.3; 3.新增了单版本 - 其他版本的判断; 
-// @note         0.0.34 更新: 1.新增了标题黑块、emoji判定; 
-// @note         0.0.33 更新: 1.修复了点击目录时积分还原不工作的问题; 
-// @note         0.0.32 更新: 1.新增了使用目录功能时也会触发检测的功能; 2.新增了主函数的分类; 
-// @note         0.0.31 更新: 1.紧急修复了还原积分判定的小bug; 
-// @note         0.0.30 更新: 1.新增了还原旧版积分的设定; 
+// @note         0.0.35 更新: 1.新增了标题黑块判定; 2.新增了1.16.3; 3.新增了单版本 - 其他版本的判断;
+// @note         0.0.34 更新: 1.新增了标题黑块、emoji判定;
+// @note         0.0.33 更新: 1.修复了点击目录时积分还原不工作的问题;
+// @note         0.0.32 更新: 1.新增了使用目录功能时也会触发检测的功能; 2.新增了主函数的分类;
+// @note         0.0.31 更新: 1.紧急修复了还原积分判定的小bug;
 // @note         新增、更改、修复、移除、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -36,8 +36,6 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @require      https://cdn.staticfile.org/jquery/1.12.4/jquery.min.js
-// @require 	 https://greasyfork.org/scripts/376401-findandreplacedomtext/code/findAndReplaceDOMText.js?version=660038
-// @require      https://greasyfork.org/scripts/376402-ddxuf/code/ddxuf.js?version=661422
 // ==/UserScript==
 
 (function() {
@@ -199,7 +197,9 @@
         };
     }
 
-    var VersionList = ['1.16.5','1.16.4','1.16.3','1.16.2','1.16.1','1.16',
+    var VersionList = ['1.18.1','1.18',
+                       '1.17.1','1.17',
+                       '1.16.5','1.16.4','1.16.3','1.16.2','1.16.1','1.16',
                        '1.15.2', '1.15.1', '1.15',
                        '1.14.4', '1.14',
                        '1.13.2', '1.13.1', '1.13',
@@ -210,8 +210,8 @@
                        '1.8.X',
                        '1.7.10', '1.7.2',
                        '1.6.4'];
-    var VersionList_X = ['1.6.X', '1.7.X', '1.8.X', '1.9.X', '1.10.X', '1.11.X', '1.12.X', '1.13.X', '1.14.X', '1.15.X','1.16.X'];
-    var VersionList_x = ['1.6.x', '1.7.x', '1.8.x', '1.9.x', '1.10.x', '1.11.x', '1.12.x', '1.13.x', '1.14.x', '1.15.x','1.16.x'];
+    var VersionList_X = ['1.6.X', '1.7.X', '1.8.X', '1.9.X', '1.10.X', '1.11.X', '1.12.X', '1.13.X', '1.14.X', '1.15.X','1.16.X','1.17.X','1.18.X'];
+    var VersionList_x = ['1.6.x', '1.7.x', '1.8.x', '1.9.x', '1.10.x', '1.11.x', '1.12.x', '1.13.x', '1.14.x', '1.15.x','1.16.x','1.17.x','1.18.x'];
     function ServerVersionXS(str){
         //从VersionList调取.x的最大值
         for(var i = 0; i < VersionList_X.length; i++){
@@ -220,6 +220,12 @@
             };
         };
         switch(i){
+            case 12:
+                //1.18.1
+                return VersionList[VersionList.length - 29];
+            case 11:
+                //1.17.1
+                return VersionList[VersionList.length - 27];
             case 10:
                 //1.16.5
                 return VersionList[VersionList.length - 25];
@@ -265,6 +271,12 @@
             };
         };
         switch(i){
+            case 12:
+                //1.18
+                return VersionList[VersionList.length - 28];
+            case 11:
+                //1.17
+                return VersionList[VersionList.length - 26];
             case 10:
                 //1.16
                 return VersionList[VersionList.length - 20];
@@ -1241,7 +1253,7 @@
             OnlyFalse(isNull(jq(this).text()), jq(this), '该项为空');
         });
 
-        start_xx_j();
+        //start_xx_j();
         //↑百度网盘有效性判断
 
     };
