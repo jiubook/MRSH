@@ -10,17 +10,30 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
+<<<<<<< HEAD
 // @lastmodified 2023-05-19
 // @note         0.0.40 更新: 1.新增了1.19.2至1.17的判定;
+=======
+// @lastmodified 2022-02-02
+// @note         0.0.40 更新: 1.移除了百度网盘判定;2.新增了1.17、1.17.1、1.18、1.18.1;
+>>>>>>> a26847ce16561809fb4363f5c2f49560de943fe6
 // @note         0.0.39 更新: 1.移除了模板判定中的1.12.1;
 // @note         0.0.38 更新: 1.新增了1.16.5; 2.修复了一键移动至审核区按钮失效的问题;
 // @note         0.0.37 更新: 1.新增了1.16.4;
 // @note         0.0.36 更新: 1.修复了新人贴设置公益时会陷入无限循环的bug;
+<<<<<<< HEAD
 // @note         0.0.35 更新: 1.新增了标题黑块判定; 2.新增了1.16.3; 3.新增了单版本 - 其他版本的判断; 
 // @note         0.0.34 更新: 1.新增了标题黑块、emoji判定; 
 // @note         0.0.33 更新: 1.修复了点击目录时积分还原不工作的问题; 
 // @note         0.0.32 更新: 1.新增了使用目录功能时也会触发检测的功能; 2.新增了主函数的分类; 
 // @note         0.0.31 更新: 1.紧急修复了还原积分判定的小bug; 
+=======
+// @note         0.0.35 更新: 1.新增了标题黑块判定; 2.新增了1.16.3; 3.新增了单版本 - 其他版本的判断;
+// @note         0.0.34 更新: 1.新增了标题黑块、emoji判定;
+// @note         0.0.33 更新: 1.修复了点击目录时积分还原不工作的问题;
+// @note         0.0.32 更新: 1.新增了使用目录功能时也会触发检测的功能; 2.新增了主函数的分类;
+// @note         0.0.31 更新: 1.紧急修复了还原积分判定的小bug;
+>>>>>>> a26847ce16561809fb4363f5c2f49560de943fe6
 // @note         新增、更改、修复、移除、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -36,8 +49,6 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @require      https://cdn.staticfile.org/jquery/1.12.4/jquery.min.js
-// @require 	 https://greasyfork.org/scripts/376401-findandreplacedomtext/code/findAndReplaceDOMText.js?version=660038
-// @require      https://greasyfork.org/scripts/376402-ddxuf/code/ddxuf.js?version=661422
 // ==/UserScript==
 
 (function() {
@@ -199,8 +210,12 @@
         };
     }
 
+<<<<<<< HEAD
     var VersionList = ['1.19.2','1.19.1','1.19',
                        '1.18.2','1.18.1','1.18',
+=======
+    var VersionList = ['1.18.1','1.18',
+>>>>>>> a26847ce16561809fb4363f5c2f49560de943fe6
                        '1.17.1','1.17',
                        '1.16.5','1.16.4','1.16.3','1.16.2','1.16.1','1.16',
                        '1.15.2', '1.15.1', '1.15',
@@ -213,8 +228,13 @@
                        '1.8.X',
                        '1.7.10', '1.7.2',
                        '1.6.4'];
+<<<<<<< HEAD
     var VersionList_X = ['1.6.X', '1.7.X', '1.8.X', '1.9.X', '1.10.X', '1.11.X', '1.12.X', '1.13.X', '1.14.X', '1.15.X','1.16.X','1.17.X','1.18.X','1.19.X'];
     var VersionList_x = ['1.6.x', '1.7.x', '1.8.x', '1.9.x', '1.10.x', '1.11.x', '1.12.x', '1.13.x', '1.14.x', '1.15.x','1.16.x','1.17.x','1.18.x','1.19.x'];
+=======
+    var VersionList_X = ['1.6.X', '1.7.X', '1.8.X', '1.9.X', '1.10.X', '1.11.X', '1.12.X', '1.13.X', '1.14.X', '1.15.X','1.16.X','1.17.X','1.18.X'];
+    var VersionList_x = ['1.6.x', '1.7.x', '1.8.x', '1.9.x', '1.10.x', '1.11.x', '1.12.x', '1.13.x', '1.14.x', '1.15.x','1.16.x','1.17.x','1.18.x'];
+>>>>>>> a26847ce16561809fb4363f5c2f49560de943fe6
     function ServerVersionXS(str){
         //从VersionList调取.x的最大值
         for(var i = 0; i < VersionList_X.length; i++){
@@ -223,12 +243,18 @@
             };
         };
         switch(i){
+<<<<<<< HEAD
             case 13:
                 //1.19.2
                 return VersionList[VersionList.length - 33];
             case 12:
                 //1.18.2
                 return VersionList[VersionList.length - 30];
+=======
+            case 12:
+                //1.18.1
+                return VersionList[VersionList.length - 29];
+>>>>>>> a26847ce16561809fb4363f5c2f49560de943fe6
             case 11:
                 //1.17.1
                 return VersionList[VersionList.length - 27];
@@ -277,9 +303,12 @@
             };
         };
         switch(i){
+<<<<<<< HEAD
             case 13:
                 //1.19
                 return VersionList[VersionList.length - 31];
+=======
+>>>>>>> a26847ce16561809fb4363f5c2f49560de943fe6
             case 12:
                 //1.18
                 return VersionList[VersionList.length - 28];
@@ -1262,7 +1291,7 @@
             OnlyFalse(isNull(jq(this).text()), jq(this), '该项为空');
         });
 
-        start_xx_j();
+        //start_xx_j();
         //↑百度网盘有效性判断
 
     };
