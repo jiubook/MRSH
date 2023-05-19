@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.41
+// @version      0.0.42
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -11,6 +11,7 @@
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
 // @lastmodified 2023-05-19
+// @note         0.0.42 更新: 1.新增了1.19.4至1.19.3的判定;
 // @note         0.0.41 更新: 1.新增了1.19.2至1.19的判定;
 // @note         0.0.40 更新: 1.移除了百度网盘判定;2.新增了1.17、1.17.1、1.18、1.18.1;
 // @note         0.0.39 更新: 1.移除了模板判定中的1.12.1;
@@ -20,7 +21,6 @@
 // @note         0.0.35 更新: 1.新增了标题黑块判定; 2.新增了1.16.3; 3.新增了单版本 - 其他版本的判断;
 // @note         0.0.34 更新: 1.新增了标题黑块、emoji判定;
 // @note         0.0.33 更新: 1.修复了点击目录时积分还原不工作的问题;
-// @note         0.0.32 更新: 1.新增了使用目录功能时也会触发检测的功能; 2.新增了主函数的分类;
 // @note         新增、更改、修复、移除、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -197,7 +197,7 @@
         };
     }
 
-    var VersionList = ['1.19.2','1.19.1','1.19',
+    var VersionList = ['1.19.4','1.19.3','1.19.2','1.19.1','1.19',
                        '1.18.2','1.18.1','1.18',
                        '1.17.1','1.17',
                        '1.16.5','1.16.4','1.16.3','1.16.2','1.16.1','1.16',
@@ -222,8 +222,8 @@
         };
         switch(i){
             case 13:
-                //1.19.2
-                return VersionList[VersionList.length - 33];
+                //1.19.4
+                return VersionList[VersionList.length - 35];
             case 12:
                 //1.18.2
                 return VersionList[VersionList.length - 30];
