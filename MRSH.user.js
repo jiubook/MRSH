@@ -1,6 +1,10 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
+<<<<<<< Updated upstream
 // @version      0.0.43
+=======
+// @version      0.0.44
+>>>>>>> Stashed changes
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,7 +14,12 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
+<<<<<<< Updated upstream
 // @lastmodified 2023-07-20
+=======
+// @lastmodified 2023-07-28
+// @note         0.0.44 更新: 1.新增了新版版本号判定，待群内讨论后续标准;
+>>>>>>> Stashed changes
 // @note         0.0.43 更新: 1.移除了版本号的判定，待群内讨论标准;
 // @note         0.0.42 更新: 1.新增了1.19.4至1.19.3的判定;
 // @note         0.0.41 更新: 1.新增了1.19.2至1.19的判定;
@@ -20,7 +29,10 @@
 // @note         0.0.37 更新: 1.新增了1.16.4;
 // @note         0.0.36 更新: 1.修复了新人贴设置公益时会陷入无限循环的bug;
 // @note         0.0.35 更新: 1.新增了标题黑块判定; 2.新增了1.16.3; 3.新增了单版本 - 其他版本的判断;
+<<<<<<< Updated upstream
 // @note         0.0.34 更新: 1.新增了标题黑块、emoji判定;
+=======
+>>>>>>> Stashed changes
 // @note         新增、更改、修复、移除、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -70,7 +82,6 @@
             });
         };
     }
-
     function TrueOrFalsOrNull(ele,str,info2,info3){
     //顾名思义，添加了通过、不通过、NULL三种不同的tips
         if(ele > 0){
@@ -87,7 +98,6 @@
             });
         };
     }
-
     function TrueOrFalse(ele,str,info2){
     //顾名思义，添加了通过、不通过两种不同的tips
         if(ele){
@@ -197,6 +207,360 @@
         };
     }
 
+<<<<<<< Updated upstream
+=======
+    var VersionList = ['1.20.1','1.20',
+                       '1.19.4','1.19.3','1.19.2','1.19.1','1.19',
+                       '1.18.2','1.18.1','1.18',
+                       '1.17.1','1.17',
+                       '1.16.5','1.16.4','1.16.3','1.16.2','1.16.1','1.16',
+                       '1.15.2', '1.15.1', '1.15',
+                       '1.14.4', '1.14',
+                       '1.13.2', '1.13.1', '1.13',
+                       '1.12.2', '1.12',
+                       '1.11.2', '1.11',
+                       '1.10.X',
+                       '1.9.4', '1.9',
+                       '1.8.X',
+                       '1.7.10', '1.7.2',
+                       '1.6.4'];
+    var VersionList_X = ['1.6.X', '1.7.X', '1.8.X', '1.9.X', '1.10.X', '1.11.X', '1.12.X', '1.13.X', '1.14.X', '1.15.X','1.16.X','1.17.X','1.18.X','1.19.X'];
+    var VersionList_x = ['1.6.x', '1.7.x', '1.8.x', '1.9.x', '1.10.x', '1.11.x', '1.12.x', '1.13.x', '1.14.x', '1.15.x','1.16.x','1.17.x','1.18.x','1.19.x'];
+    function ServerVersionXS(str){
+        //从VersionList调取.x的最大值，如果不是.x，传回原str
+        for(var i = 0; i < VersionList_X.length; i++){
+            if((str == VersionList_X[i])||(str == VersionList_x[i])){
+                break;
+            };
+        };
+        switch(i){
+            case 14:
+                //1.20.1
+                return VersionList[VersionList.length - 37];
+            case 13:
+                //1.19.4
+                return VersionList[VersionList.length - 35];
+            case 12:
+                //1.18.2
+                return VersionList[VersionList.length - 30];
+            case 11:
+                //1.17.1
+                return VersionList[VersionList.length - 27];
+            case 10:
+                //1.16.5
+                return VersionList[VersionList.length - 25];
+            case 9:
+                //1.15.2
+                return VersionList[VersionList.length - 19];
+            case 8:
+                //1.14.4
+                return VersionList[VersionList.length - 16];
+            case 7:
+                //1.13.2
+                return VersionList[VersionList.length - 14];
+            case 6:
+                //1.12.2
+                return VersionList[VersionList.length - 11];
+            case 5:
+                //1.11.2
+                return VersionList[VersionList.length - 9];
+            case 4:
+                //1.10.x
+                return VersionList[VersionList.length - 7];
+            case 3:
+                //1.9.4
+                return VersionList[VersionList.length - 6];
+            case 2:
+                //1.8.x
+                return VersionList[VersionList.length - 4];
+            case 1:
+                //1.7.10
+                return VersionList[VersionList.length - 3];
+            case 0:
+                //1.6.4
+                return VersionList[VersionList.length - 1];
+            default:
+                return str;
+        };
+    }
+    function ServerVersionXE(str){
+        //从VersionList调取.x的最小值，如果不是.x，传回原str
+        for(var i = 0; i < VersionList_X.length; i++){
+            if((str == VersionList_X[i])||(str == VersionList_x[i])){
+                break;
+            };
+        };
+        switch(i){
+            case 14:
+                //1.20
+                return VersionList[VersionList.length - 36];
+            case 13:
+                //1.19
+                return VersionList[VersionList.length - 31];
+            case 12:
+                //1.18
+                return VersionList[VersionList.length - 28];
+            case 11:
+                //1.17
+                return VersionList[VersionList.length - 26];
+            case 10:
+                //1.16
+                return VersionList[VersionList.length - 20];
+            case 9:
+                //1.15
+                return VersionList[VersionList.length - 17];
+            case 8:
+                //1.14
+                return VersionList[VersionList.length - 15];
+            case 7:
+                //1.13
+                return VersionList[VersionList.length - 12];
+            case 6:
+                //1.12
+                return VersionList[VersionList.length - 10];
+            case 5:
+                //1.11
+                return VersionList[VersionList.length - 8];
+            case 4:
+                //1.10.x
+                return VersionList[VersionList.length - 7];
+            case 3:
+                //1.9
+                return VersionList[VersionList.length - 5];
+            case 2:
+                //1.8.x
+                return VersionList[VersionList.length - 4];
+            case 1:
+                //1.7.2
+                return VersionList[VersionList.length - 2];
+            case 0:
+                //1.6.4
+                return VersionList[VersionList.length - 1];
+            default:
+                return str;
+        };
+    }
+    function SwitchLength(str1, str2){
+        for(var i = 0; i < str2.length; i++){
+            //在str2里遍历，直到找到str1位置
+            if(str1 == str2[i]){
+                return i;
+            };
+        };
+    }
+    function isServerVersionSelectTRUE(str1, str2, ServerVersion){
+        //ServerVersion为模板选择的版本号
+        var sv1_Diff = SwitchLength(ServerVersionXE(str1), VersionList) - SwitchLength(ServerVersionXS(str1), VersionList);
+        //sv1在VersionList的.x区间长度
+        var sv1_Diff2 = SwitchLength(ServerVersionXE(str1), ServerVersion) - SwitchLength(ServerVersionXS(str1), ServerVersion);
+        //sv1在模板的.x区间长度
+        if(str2 == null ){
+            if (sv1_Diff == sv1_Diff2){
+                return 1;
+            }else{
+                return -1;
+            }
+        }else{
+            var sv2_Diff = SwitchLength(ServerVersionXE(str2), VersionList) - SwitchLength(ServerVersionXS(str2), VersionList);
+            //sv2在VersionList的.x区间长度
+            var sv2_Diff2 = SwitchLength(ServerVersionXE(str2), ServerVersion) - SwitchLength(ServerVersionXS(str2), ServerVersion);
+            //sv2在模板的.x区间长度
+            if ((sv1_Diff == sv1_Diff2) && (sv2_Diff == sv2_Diff2)){
+                return 1;
+            }else{
+                return -1;
+            }
+        }
+    }
+    function ServerVersionTips(str1){
+        var str2 = jq(".cgtl.mbm tbody tr td").eq(2).text();
+        var ServerVersion = trim(str2)
+        ServerVersion = ServerVersion.split(/\s+/);
+        if (str1 > 0){
+            if (ServerVersion.length > 5){
+                ThreeDifferentTips(-1, jq(".cgtl.mbm tbody tr td").eq(2), "", "你确定有这么多核心？", "")
+            }else{
+                ThreeDifferentTips(1, jq(".cgtl.mbm tbody tr td").eq(2), "新版版规判定正确", "", "")
+            }
+        }else{
+            OnlyFalse(-1, jq(".cgtl.mbm tbody tr td").eq(2), "模板版本号与标题不符")
+        }
+    }
+    function getServerVersion(str1, str2){
+        var strL = str1.lastIndexOf("[");
+        var strR = str1.lastIndexOf("]");
+        var subStr = String(str1.substring(strL + 1,strR));
+        subStr = trim(subStr);
+        var ServerVersion = trim(str2)
+        ServerVersion = ServerVersion.split(/\s+/);
+        //ServerVersion为模板选择的核心版本号
+        var ZZ5 = /^1\.\d{1,2}(\.(\d{1,2}|X|x))?\-\d{2}w\d{2}[a-z]$/
+        //1.7.x-20w05a
+        var ZZ4 = /^\d{2}w\d{2}[a-z]$/;
+        //20w05a
+        var ZZ3 = /^1\.\d{1,2}(\.(\d{1,2}|X|x))?\-1\.\d{1,2}(\.(\d{1,2}|X|x))?$/;
+        //1.7.x-1.12.x
+        var ZZ2 = /^1\.\d{1,2}(\.\d{1,2})?$/;
+        //1.7.10
+        var ZZ1 = /^1\.\d{1,2}\.(X|x)$/;
+        //1.7.x
+    /*
+        console.log("sbS:" + subStr);
+        console.log("SvS:" + ServerVersion[0] + "; SvE:" + ServerVersion[ServerVersion.length - 1]);
+        console.log("SvL:" + ServerVersion.length);
+        console.log("VlS:" + VersionList[0] + "; VlE:" + VersionList[VersionList.length - 1]);
+        console.log("VlL:" + VersionList.length);
+        console.log(ZZ5.test(subStr));
+        console.log(ZZ4.test(subStr));
+        console.log(ZZ3.test(subStr));
+        console.log(ZZ2.test(subStr));
+        console.log(ZZ1.test(subStr));
+        ↑调试用
+    */
+        if(ZZ5.test(subStr) && ServerVersion[ServerVersion.length - 1] == '其他版本'){
+        /**
+         * 标题为 1.7.2-20w05a 且勾选了 其他版本 的情况
+         * 此为23年7月新版规规范
+         */
+            var TitleVersion5 = subStr.split('-');
+            //TitleVersion为标题版本号
+            trim(TitleVersion5[0]);
+            trim(TitleVersion5[1]);
+            //避免有人在-的左右加空格
+            if(ZZ1.test(TitleVersion5[0])){
+            //如果标题版本号1为.x
+                if(isServerVersionSelectTRUE(TitleVersion5[0],null,ServerVersion)){
+                //如果.x勾选正确
+                    return 5;
+                }else{
+                    //标题中的版本号和模板不符 就直接return -3
+                    return -3;
+                };
+            }else{
+            //如果标题版本号1为.数字
+                if(TitleVersion5[0] == ServerVersion[ServerVersion.length - 2]){
+                    //判定标题中 左侧的版本号 是否和 模板倒数第二个(倒数第一为其他版本) 相符合
+                    return 5;
+                }else{
+                    //标题中的版本号和模板不符 就直接return -3
+                    return -3;
+                };
+            }
+        }else if(ZZ4.test(subStr) && ServerVersion[ServerVersion.length - 1] == '其他版本'){
+        /**
+         * 标题为20w05a 且模板勾选了 其他版本 的情况
+         */
+            if (ServerVersion.length > 1 ){
+                //模板选择多版本，标题选择单版本的情况 return -1
+                return -1;
+            }else{
+                //模板有且仅有一个'其他版本'时 return 4
+                return 4;
+            }
+        }else if(ZZ3.test(subStr)){
+        /**
+         * 标题为 1.7.x-1.12.x 多版本的情况
+         * 23年7月新版规
+         */
+            var TitleVersion3 = subStr.split('-');
+            //TitleVersion为标题版本号
+            trim(TitleVersion3[0]);
+            trim(TitleVersion3[1]);
+            //避免有人在-的左右加空格
+            //console.log("TV1:" + TitleVersion3[0] + "; TV2:" + TitleVersion3[1]);
+            // ↑ 调试用 ↑ 
+                if(ZZ1.test(TitleVersion3[0]) && ZZ1.test(TitleVersion3[1])){
+                //如果标题版本号1和2均为.x
+                //console.log("tv1");
+                // ↑ 调试用 ↑ 
+                    if(isServerVersionSelectTRUE(TitleVersion3[0], TitleVersion3[1], ServerVersion)){
+                    //如果.x勾选正确
+                        return 3;
+                    }else{
+                        //标题中的版本号和模板不符 就直接return -3
+                        return -3;
+                    };
+                }else if(ZZ1.test(TitleVersion3[0])){
+                //如果标题版本号1为.x，标题版本号2为.2
+                //console.log("tv2");
+                // ↑ 调试用 ↑ 
+                    if(isServerVersionSelectTRUE(TitleVersion3[0], null, ServerVersion) && (TitleVersion3[1] == ServerVersion[0])){
+                    //标题版本号1勾选正确，标题版本号2是否为模板版本号第一个
+                        return 3;
+                    }else{
+                        //标题中的版本号和模板不符 就直接return -3
+                        return -3;
+                    };
+                }else if(ZZ1.test(TitleVersion3[1])){
+                //如果标题版本号1为.2，标题版本号2为.x
+                //console.log("tv3");
+                // ↑ 调试用 ↑ 
+                    if((TitleVersion3[0] == ServerVersion[ServerVersion.length - 1]) && isServerVersionSelectTRUE(TitleVersion3[1], null, ServerVersion)){
+                    //标题版本号1是否为模板版本号倒数第一个, 标题版本号2勾选正确
+                        return 3;
+                    }else{
+                        //标题中的版本号和模板不符 就直接return -3
+                        return -3;
+                    };
+                }else{
+                //console.log("tv4");
+                // ↑ 调试用 ↑ 
+                //如果标题版本号1和2均为.2
+                    if((TitleVersion3[0] == ServerVersion[ServerVersion.length - 1]) && (TitleVersion3[1] == ServerVersion[0])){
+                    //标题版本号1是否为模板版本号倒数第一个，标题版本号2是否为模板版本号第一个
+                        return 3;
+                    }else{
+                        //标题中的版本号和模板不符 就直接return -3
+                        return -3;
+                    };
+                }
+        }else if(ZZ2.test(subStr)){
+        /** 
+         * 标题为 1.7.2 单版本的情况
+         */
+            var TitleVersion2 = trim(subStr);
+            if (ServerVersion.length > 1 ){
+            //模板选择多版本，标题选择单版本的情况 return -1
+                return -1;
+            }
+            if ((TitleVersion2 == ServerVersion[0]) || ((TitleVersion2 != ServerVersion[0]) && (ServerVersion[ServerVersion.length - 1] == '其他版本'))){
+            //判定标题中的版本号是否和模板相符合 || 不符合的时候 是否选择了其他版本
+                return 2;
+            }else{
+            //标题中的版本号和模板不符 就直接return -3
+                return -3;
+            };
+        }else if(ZZ1.test(subStr)){
+        /** 
+         * 标题为 1.7.x 复合版本的情况, 23年7月新版规
+         */
+            var TitleVersion1 = trim(subStr);
+            if(ZZ1.test(TitleVersion1)){
+            //如果标题版本号1为.x
+                if(isServerVersionSelectTRUE(TitleVersion1,null,ServerVersion)){
+                //如果.x勾选正确
+                    return 1;
+                }else{
+                    //标题中的版本号和模板不符 就直接return -3
+                    return -3;
+                };
+            }else{
+            //如果标题版本号1为.数字
+                if(TitleVersion1 == ServerVersion[0]){
+                    //判定标题中 左侧的版本号 是否和 模板第一个 相符合
+                    return 1;
+                }else{
+                    //标题中的版本号和模板不符 就直接return -3
+                    return -3;
+                };
+            }
+        }else{
+            //标题中的版本号和模板不符 就直接return -3
+            return -3;
+        };
+    }
+
+>>>>>>> Stashed changes
     function ServerIPAddress(str){
         var SvrIPAddress = trim(str);
         var ZZ3 = /((\w)+\.)+(\w)+(\:[0-9]+)?/;
@@ -966,7 +1330,11 @@
         //eq(0)为服务器名称
         //提取标题中的服务器名称后，和模板内服务器名称做对比
 
+<<<<<<< Updated upstream
         ThreeDifferentTips(-1, jq(".cgtl.mbm tbody tr td").eq(2), '', '注意版本号，暂未有足够用于脚本判断的标准', '');
+=======
+        ServerVersionTips(getServerVersion(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(2).text()));
+>>>>>>> Stashed changes
         //eq2为版本号
         //提取标题中的版本号后，和模板内版本号做对比
 
