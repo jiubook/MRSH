@@ -1,10 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-<<<<<<< Updated upstream
-// @version      0.0.43
-=======
 // @version      0.0.44
->>>>>>> Stashed changes
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -14,12 +10,8 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-<<<<<<< Updated upstream
-// @lastmodified 2023-07-20
-=======
 // @lastmodified 2023-07-28
 // @note         0.0.44 更新: 1.新增了新版版本号判定，待群内讨论后续标准;
->>>>>>> Stashed changes
 // @note         0.0.43 更新: 1.移除了版本号的判定，待群内讨论标准;
 // @note         0.0.42 更新: 1.新增了1.19.4至1.19.3的判定;
 // @note         0.0.41 更新: 1.新增了1.19.2至1.19的判定;
@@ -29,10 +21,6 @@
 // @note         0.0.37 更新: 1.新增了1.16.4;
 // @note         0.0.36 更新: 1.修复了新人贴设置公益时会陷入无限循环的bug;
 // @note         0.0.35 更新: 1.新增了标题黑块判定; 2.新增了1.16.3; 3.新增了单版本 - 其他版本的判断;
-<<<<<<< Updated upstream
-// @note         0.0.34 更新: 1.新增了标题黑块、emoji判定;
-=======
->>>>>>> Stashed changes
 // @note         新增、更改、修复、移除、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
@@ -207,8 +195,6 @@
         };
     }
 
-<<<<<<< Updated upstream
-=======
     var VersionList = ['1.20.1','1.20',
                        '1.19.4','1.19.3','1.19.2','1.19.1','1.19',
                        '1.18.2','1.18.1','1.18',
@@ -560,7 +546,6 @@
         };
     }
 
->>>>>>> Stashed changes
     function ServerIPAddress(str){
         var SvrIPAddress = trim(str);
         var ZZ3 = /((\w)+\.)+(\w)+(\:[0-9]+)?/;
@@ -1330,11 +1315,7 @@
         //eq(0)为服务器名称
         //提取标题中的服务器名称后，和模板内服务器名称做对比
 
-<<<<<<< Updated upstream
-        ThreeDifferentTips(-1, jq(".cgtl.mbm tbody tr td").eq(2), '', '注意版本号，暂未有足够用于脚本判断的标准', '');
-=======
         ServerVersionTips(getServerVersion(jq('#thread_subject').text(), jq(".cgtl.mbm tbody tr td").eq(2).text()));
->>>>>>> Stashed changes
         //eq2为版本号
         //提取标题中的版本号后，和模板内版本号做对比
 
