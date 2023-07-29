@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         McbbsReviewServerHelper
-// @version      0.0.44
+// @version      0.0.45
 // @description  MRSH - 你的服务器审核版好助手
 // @author       萌萌哒丶九灬书
 // @namespace    https://space.bilibili.com/1501743
@@ -10,7 +10,8 @@
 // @homepageURL  https://greasyfork.org/zh-TW/scripts/395841-mcbbsreviewserverhelper/
 // @license      GNU General Public License v3.0
 // @create       2020-01-28
-// @lastmodified 2023-07-28
+// @lastmodified 2023-07-29
+// @note         0.0.45 更新: 1.修复了部分细节错误;
 // @note         0.0.44 更新: 1.新增了新版版本号判定，待群内讨论后续标准;
 // @note         0.0.43 更新: 1.移除了版本号的判定，待群内讨论标准;
 // @note         0.0.42 更新: 1.新增了1.19.4至1.19.3的判定;
@@ -20,7 +21,6 @@
 // @note         0.0.38 更新: 1.新增了1.16.5; 2.修复了一键移动至审核区按钮失效的问题;
 // @note         0.0.37 更新: 1.新增了1.16.4;
 // @note         0.0.36 更新: 1.修复了新人贴设置公益时会陷入无限循环的bug;
-// @note         0.0.35 更新: 1.新增了标题黑块判定; 2.新增了1.16.3; 3.新增了单版本 - 其他版本的判断;
 // @note         新增、更改、修复、移除、精简、*可能*
 // @note         1.0.00 版本以前不会去支持一键审核，还需人工查看.
 // @match        *://www.mcbbs.net/thread-*
